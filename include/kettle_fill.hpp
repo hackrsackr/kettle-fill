@@ -23,8 +23,8 @@ public:
     float desired_gallons = desired_liters * .264172;
     float gallons = liters * .264172;
 
-    float percent_full;
-    float percent_open;
+    int percent_full;
+    int percent_open;
     int output;
     
     KettleFiller();
@@ -32,9 +32,9 @@ public:
     ~KettleFiller();
 
     float get_liters();
-    float get_percent_full();
-    float get_percent_open();
-    void set_output();
+    int get_percent_full();
+    int get_percent_open();
+    void set_output(int);
     
     float get_desired_liters();
     int get_output();
@@ -77,58 +77,56 @@ float KettleFiller::get_desired_liters()
 
 float KettleFiller::get_liters()
 {
-    //volts = ads.computeVolts(ads.readADC_SingleEnded(ads_channel));
-    //liters = (volts() - _ZEROVOLTS) * (_MAXLITERS / (_MAXVOLTS - _ZEROVOLTS));
     liters = (get_volts() - _ZEROVOLTS) * (_MAXLITERS / (_MAXVOLTS - _ZEROVOLTS));
     if (liters < 0) { liters = 0; }; 
 
     return liters;
 }
 
-float KettleFiller::get_percent_full()
+int KettleFiller::get_percent_full()
 {
-    percent_full = 1.0 - ((desired_liters - get_liters()) / desired_liters);
-    if (percent_full > 1.0) { percent_full = 1.0; }; 
-    if (percent_full < 0.0) { percent_full = 0.0; }; 
+    percent_full = 1.0 - ((desired_liters - get_liters()) / desired_liters) * 100;
+    if (percent_full > 100) { percent_full = 100; }; 
+    if (percent_full < 0) { percent_full = 0; }; 
 
     return percent_full;
 }
 
-float KettleFiller::get_percent_open()
+int KettleFiller::get_percent_open()
 {
-    percent_open = (desired_liters - get_liters()) / desired_liters;
-    if (percent_open > 1.0) { percent_open = 1.0; }; 
-    if (percent_open < 0.0) { percent_open = 0.0; }; 
+    percent_open = (desired_liters - get_liters()) / desired_liters * 100;
+    if (percent_open > 100) { percent_open = 100; }; 
+    if (percent_open < 0) { percent_open = 0; }; 
 
     return percent_open;
 }
 
 int KettleFiller::get_output()
 {
-    output = int((desired_liters - get_liters()) / desired_liters) * 255;
+    output = (get_percent_open() / 100) * 255;
     return output;
 }
 
-void KettleFiller::set_output()
+void KettleFiller::set_output(int output)
 {
-    //percent_full = ((desired_liters - get_liters()) / desired_liters);
     digitalWrite(valve_pin, get_output());
 }
 
 void KettleFiller::run() 
 {
-  StaticJsonDocument<1024> message;
+  StaticJsonDocument<1024> data;
   
-  message["key"] = _CLIENTID;
-  message["data"][name]["adc"]     = get_adc(); 
-  message["data"][name]["volts"]   = get_volts();
-  message["data"][name]["sp_l"]    = get_desired_liters();
-  message["data"][name]["liters"]  = get_liters();
-  message["data"][name]["full"]    = get_percent_full();
-  message["data"][name]["open"]    = get_percent_open();
-  message["data"][name]["output"]  = get_output();
+  data[name]["adc"]     = get_adc(); 
+  data[name]["volts"]   = get_volts();
+  data[name]["sp_l"]    = get_desired_liters();
+  data[name]["liters"]  = get_liters();
+  data[name]["full"]    = get_percent_full();
+  data[name]["open"]    = get_percent_open();
+  data[name]["output"]  = get_output();
     
-  serializeJsonPretty(message, Serial);
+  set_output(get_output());
+
+  serializeJsonPretty(data, Serial);
   
-  set_output();
+  delay(5000);
 }

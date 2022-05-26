@@ -13,7 +13,7 @@
 #define _ZEROVOLTS_ADC 10314        // adc at ZEROVOLTS
 
 // KF1
-#define _PWM1 25                    // valve pwm pin on esp32
+#define _PWM1 4                     // valve pwm pin on esp32
 #define _NAME1 "liqr"               // name
 #define _CHAN1 1                    // ads channel
 #define _SETL1 27.00                // setpoint in liters 

@@ -41,16 +41,17 @@ void loop(void)
 
   for (uint8_t kf=0; kf < _NUMBER_OF_KETTLES; kf++)
   {
-    message["data"][kf_arr[kf].name]["adc"]     = ads.readADC_SingleEnded(kf_arr[kf].ads_channel);
-    message["data"][kf_arr[kf].name]["volts"]   = ads.computeVolts(ads.readADC_SingleEnded(kf_arr[kf].ads_channel));
-    message["data"][kf_arr[kf].name]["sp_l"]    = kf_arr[kf].desired_liters;
+    message["data"][kf_arr[kf].name]["adc"]     = kf_arr[kf].get_adc();
+    message["data"][kf_arr[kf].name]["volts"]   = kf_arr[kf].get_volts();
+    message["data"][kf_arr[kf].name]["sp_l"]    = kf_arr[kf].get_desired_liters();
     message["data"][kf_arr[kf].name]["liters"]  = kf_arr[kf].get_liters();
-    message["data"][kf_arr[kf].name]["sp_gal"]  = kf_arr[kf].desired_gallons;
-    message["data"][kf_arr[kf].name]["full"]    = kf_arr[kf].percent_full;
-    message["data"][kf_arr[kf].name]["pwm"]     = kf_arr[kf].output;
+    message["data"][kf_arr[kf].name]["full"]    = kf_arr[kf].get_percent_full();
+    message["data"][kf_arr[kf].name]["open"]    = kf_arr[kf].get_percent_open();
+    message["data"][kf_arr[kf].name]["output"]     = kf_arr[kf].get_output();
     
-    kf_arr[kf].set_pwm();
+    kf_arr[kf].set_output();
   }
+
   serializeJsonPretty(message, Serial);
   
   delay(5000);
