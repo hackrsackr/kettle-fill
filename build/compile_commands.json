@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/pi/pio/ads1115_pretty/build",
+  "command": "/bin/c++ -g -o CMakeFiles/ADS1115P.dir/main.cpp.o -c /home/pi/pio/ads1115_pretty/main.cpp",
+  "file": "/home/pi/pio/ads1115_pretty/main.cpp"
+}
+]
