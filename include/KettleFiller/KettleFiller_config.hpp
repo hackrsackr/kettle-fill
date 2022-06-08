@@ -1,10 +1,7 @@
 #pragma once
 
-#include <ArduinoJson.h>
-
-#define _CLIENTID "kettle-fillers"  // key for message
-
 // Common
+#define _CLIENTID "kettle-fillers"  // Key for output message
 #define _UNITMAX 10                 // Maximum value in kPa
 #define _MAXVOLTS  5.03             // VCC
 #define _MAXVOLTS_ADC  26825        // ADC at MAXVOLTS
