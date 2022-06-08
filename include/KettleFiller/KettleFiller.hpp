@@ -10,10 +10,10 @@ Adafruit_ADS1115 ads;
 class KettleFiller {
 public:
     String name;                // Identifier
-    uint8_t valve_pin;          // Esp32 pin of the spunder valve relay
+    uint8_t valve_pin;          // Esp32 pin of the proportional valve
     uint8_t ads_channel;        // Channel of the ADS1115 to read
-    uint8_t feedback_pin;       // Esp32 pin of the spunder valve relay
-    uint16_t sensor_adc;        // Analog Bits
+    uint8_t feedback_pin;       // Esp32 pin of the feedback signal
+    uint16_t sensor_adc;        // Analog Bits from level sensor
 
     float desired_liters;       // Setpoint in Liters
     float actual_liters;        // Volume in Liters
