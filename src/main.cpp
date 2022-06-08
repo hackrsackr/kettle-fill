@@ -1,7 +1,3 @@
-#include <iostream>
-#include <array>
-
-#include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
 
 #include "kettle_fill.hpp"

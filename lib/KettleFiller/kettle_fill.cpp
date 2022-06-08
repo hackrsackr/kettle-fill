@@ -1,6 +1,3 @@
-#include <iostream>
-#include <array>
-
 #include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
 
@@ -8,8 +5,6 @@
 #include "kettle_fill_config.hpp"
 
 Adafruit_ADS1115 ads;
-
-KettleFiller::KettleFiller() {}
 
 KettleFiller::KettleFiller(String nm, uint8_t vp, uint8_t ch, float dl)
 {
@@ -21,8 +16,8 @@ KettleFiller::KettleFiller(String nm, uint8_t vp, uint8_t ch, float dl)
 
 uint16_t KettleFiller::get_adc()
 {
-    adc = ads.readADC_SingleEnded(ads_channel);
-    return adc;
+    sensor_adc = ads.readADC_SingleEnded(ads_channel);
+    return sensor_adc;
 }
 
 float KettleFiller::get_volts()
@@ -43,25 +38,28 @@ float KettleFiller::get_actual_liters()
     return actual_liters;
 }
 
-int KettleFiller::get_percent_full()
+float KettleFiller::get_percent_full()
 {
-    percent_full = 1.0 - ((desired_liters - get_actual_liters()) / desired_liters) * 100;
+    //percent_full = 1.0 - ((desired_liters - get_actual_liters()) / desired_liters) * 100;
+    percent_full = (get_actual_liters() / desired_liters) * 100;
     if (percent_full > 100) {percent_full = 100;}
     if (percent_full < 0) {percent_full = 0;}
     return percent_full;
 }
 
-int KettleFiller::get_percent_open()
+float KettleFiller::get_percent_open()
 {
-    percent_open = (desired_liters - get_actual_liters()) / desired_liters * 100;
+    //percent_open = (desired_liters - get_actual_liters()) / desired_liters * 100;
+    //percent_open = 1 - ((get_actual_liters() / desired_liters) * 100);
+    percent_open = 100 - get_percent_full();
     if (percent_open > 100) {percent_open = 100;}
     if (percent_open < 0) {percent_open = 0;}
     return percent_open;
 }
 
-int KettleFiller::get_desired_output()
+float KettleFiller::get_desired_output()
 {
-    desired_output = (get_percent_open() / 100) * 255;
+    desired_output = (get_percent_open() / 100.0) * 255.0;
     return desired_output;
 }
 
@@ -75,21 +73,3 @@ float KettleFiller::get_actual_output()
     actual_output = analogReadMilliVolts(feedback_pin) / 1000.0;
     return actual_output;
 }
-
-//void KettleFiller::run()
-//{
-//    StaticJsonDocument<1024> data;
-
-//    data[name]["adc"] = get_adc();
-//    data[name]["volts"] = get_volts();
-//    data[name]["sp_l"] = get_desired_liters();
-//    data[name]["liters"] = get_actual_liters();
-//    data[name]["full"] = get_percent_full();
-//    data[name]["open"] = get_percent_open();
-//    data[name]["output"] = get_desired_output();
-
-//    set_output(get_desired_output());
-
-//    serializeJsonPretty(data, Serial);
-
-//}
