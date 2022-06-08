@@ -1,10 +1,5 @@
-#include <ArduinoJson.h>
-
 #include "KettleFiller/KettleFiller.hpp"
 #include "KettleFiller/KettleFiller_config.hpp"
-//#include "kettle_fill.hpp"
-//#include "kettle_fill.cpp"
-//#include "kettle_fill_config.hpp"
 
 KettleFiller kf1(_NAME1, _PWM1, _CHAN1, _SETL1);
 
