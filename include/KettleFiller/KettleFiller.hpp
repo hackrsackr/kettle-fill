@@ -9,19 +9,19 @@ Adafruit_ADS1115 ads;
 
 class KettleFiller {
 public:
-    String name;                // Identifier
-    uint8_t valve_pin;          // Esp32 pin of the proportional valve
-    uint8_t ads_channel;        // Channel of the ADS1115 to read
-    uint8_t feedback_pin;       // Esp32 pin of the feedback signal
-    uint16_t sensor_adc;        // Analog Bits from level sensor
+    String name;                        // Identifier
+    uint8_t valve_pin;                  // Esp32 pin of the proportional valve
+    uint8_t ads_channel;                // Channel of the ADS1115 to read
+    uint8_t feedback_pin;               // Esp32 pin of the feedback signal
+    uint16_t sensor_adc;                // Analog Bits from level sensor
 
-    float desired_liters;       // Setpoint in Liters
-    float actual_liters;        // Volume in Liters
-    float sensor_volts;         // Volts from sensor
-    float actual_output;        // Volts from feedback pin
-    float desired_output;       // Desired valve PWM
-    float percent_full;         // Actual_liters / Desired_liters
-    float percent_open;         // Inverse of percentage full
+    float desired_liters;               // Setpoint in Liters
+    float actual_liters;                // Volume in Liters
+    float sensor_volts;                 // Volts from sensor
+    float actual_output;                // Volts from feedback pin
+    float desired_output;               // Desired valve PWM
+    float percent_full;                 // Actual_liters / Desired_liters
+    float percent_open;                 // Inverse of percentage full
     
     KettleFiller(String, uint8_t, uint8_t, float);
     uint16_t get_adc();       
