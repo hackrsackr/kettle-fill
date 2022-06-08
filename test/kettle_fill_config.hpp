@@ -1,5 +1,7 @@
 #pragma once
 
+//#include <array>
+
 #define _CLIENTID "kettle-fillers"  // key for message
 
 // ALL
@@ -13,21 +15,24 @@
 #define _ZEROVOLTS_ADC 10314        // adc at ZEROVOLTS
 
 // KF1
-#define _PWM1 4                     // valve pwm pin on esp32
 #define _NAME1 "liqr"               // name
+#define _PWM1 4                     // valve_pin: valve pwm pin on esp32
+#define _FBV1 1                     // feedback_pin: valve feedback pin on esp32
 #define _CHAN1 1                    // ads channel
-#define _SETL1 27.00                // setpoint in liters 
+#define _SETL1 27.00f                // setpoint in liters 
 
 // KF2
-#define _PWM2 26                    // valve pwm pin on esp32
 #define _NAME2 "boil"               // name
+#define _PWM2 26                    // valve pwm pin on esp32
+#define _FBV2 2                    // valve pwm pin on esp32
 #define _CHAN2 3                    // ads channel
-#define _SETL2 27.00                // setpoint in liters 
+#define _SETL2 27.00f               // setpoint in liters 
 
 
 
 
 std::array<const String,  _NUMBER_OF_KETTLES> _KF_NAMES = { _NAME1, _NAME2 };
 std::array<const uint8_t, _NUMBER_OF_KETTLES> _PWM_PINS = { _PWM1, _PWM2 };
-std::array<const uint8_t, _NUMBER_OF_KETTLES> _ADS_PINS = { _CHAN1, _CHAN2 };
+std::array<const uint8_t, _NUMBER_OF_KETTLES> _FBV_PINS = { _FBV1, _FBV2 };
+std::array<const uint8_t, _NUMBER_OF_KETTLES> _ADS_CHNS = { _CHAN1, _CHAN2 };
 std::array<const float,   _NUMBER_OF_KETTLES> _D_LITERS = { _SETL1, _SETL2 };
