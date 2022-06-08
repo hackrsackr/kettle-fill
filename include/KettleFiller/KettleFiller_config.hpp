@@ -1,39 +1,34 @@
 #pragma once
 
-#include <array>
 #include <ArduinoJson.h>
 
 #define _CLIENTID "kettle-fillers"  // key for message
 
-// ALL
-#define _NUMBER_OF_KETTLES 2        // kettles
-#define _UNITMAX 10                 // kPa
+// Common
+#define _UNITMAX 10                 // Maximum value in kPa
 #define _MAXVOLTS  5.03             // VCC
-#define _MAXVOLTS_ADC  26825        // adc at MAXVOLTS
-#define _MAXLITERS 77.5             // adc at MAXVOLTS
-#define _MAXGALLONS 20              // adc at MAXVOLTS
-#define _ZEROVOLTS 1.93             // voltage with no liquid
-#define _ZEROVOLTS_ADC 10314        // adc at ZEROVOLTS
+#define _MAXVOLTS_ADC  26825        // ADC at MAXVOLTS
+#define _MAXLITERS 77.5             // Max volume in Liter
+#define _ZEROVOLTS 1.93             // Voltage with no liquid
+#define _ZEROVOLTS_ADC 10314        // Adc at ZEROVOLTS
 
-// KF1
-#define _NAME1 "liqr"               // name
-#define _PWM1 4                     // valve_pin: valve pwm pin on esp32
-#define _FBV1 1                     // feedback_pin: valve feedback pin on esp32
-#define _CHAN1 1                    // ads channel
-#define _SETL1 27.00f                // setpoint in liters 
+// KF1-Specific
+#define _NAME1 "liqr"               // Identifier
+#define _PWM1 4                     // Valve_pin: valve pwm pin on esp32
+#define _FBV1 1                     // Feedback_pin: valve feedback pin on esp32
+#define _CHAN1 1                    // ADS1115 channel
+#define _SETL1 27.00f               // Setpoint in Liters 
 
-// KF2
-#define _NAME2 "boil"               // name
-#define _PWM2 26                    // valve pwm pin on esp32
-#define _FBV2 2                    // valve pwm pin on esp32
-#define _CHAN2 3                    // ads channel
-#define _SETL2 27.00f               // setpoint in liters 
+// KF2-Specific
+#define _NAME2 "mash"               // Identifier
+#define _PWM2 26                    // Valve_pin: valve pwm pin on esp32
+#define _FBV2 2                     // Feedback_pin: valve feedback pin on esp32
+#define _CHAN2 2                    // ADS1115 channel
+#define _SETL2 27.00f               // Setpoint in Liters 
 
-
-
-
-std::array<const String,  _NUMBER_OF_KETTLES> _KF_NAMES = { _NAME1, _NAME2 };
-std::array<const uint8_t, _NUMBER_OF_KETTLES> _PWM_PINS = { _PWM1, _PWM2 };
-std::array<const uint8_t, _NUMBER_OF_KETTLES> _FBV_PINS = { _FBV1, _FBV2 };
-std::array<const uint8_t, _NUMBER_OF_KETTLES> _ADS_CHNS = { _CHAN1, _CHAN2 };
-std::array<const float,   _NUMBER_OF_KETTLES> _D_LITERS = { _SETL1, _SETL2 };
+// KF3-Specific
+#define _NAME3 "boil"               // Identifier
+#define _PWM3 26                    // Valve_pin: valve pwm pin on esp32
+#define _FBV3 2                     // Feedback_pin: valve feedback pin on esp32
+#define _CHAN3 3                    // ADS1115 channel
+#define _SETL3 27.00f               // Setpoint in Liters 
