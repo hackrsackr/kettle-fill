@@ -10,10 +10,10 @@
             "includePath": [
                 "/Users/rob/kettle-fill/include",
                 "/Users/rob/kettle-fill/src",
-                "/Users/rob/kettle-fill/lib/ArduinoJson/src",
                 "/Users/rob/kettle-fill/lib/Adafruit ADS1X15",
                 "/Users/rob/kettle-fill/lib/Adafruit BusIO",
                 "/Users/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
+                "/Users/rob/kettle-fill/lib/ArduinoJson/src",
                 "/Users/rob/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "/Users/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                 "/Users/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
@@ -229,10 +229,10 @@
                 "path": [
                     "/Users/rob/kettle-fill/include",
                     "/Users/rob/kettle-fill/src",
-                    "/Users/rob/kettle-fill/lib/ArduinoJson/src",
                     "/Users/rob/kettle-fill/lib/Adafruit ADS1X15",
                     "/Users/rob/kettle-fill/lib/Adafruit BusIO",
                     "/Users/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
+                    "/Users/rob/kettle-fill/lib/ArduinoJson/src",
                     "/Users/rob/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "/Users/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                     "/Users/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",

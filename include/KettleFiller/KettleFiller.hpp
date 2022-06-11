@@ -4,25 +4,25 @@
 #include "VolumeSensor/VolumeSensor.hpp"
 #include "PropValve/PropValve.hpp"
 
-
-class KettleFiller {
+class KettleFiller
+{
 public:
     String name;
-    float desired_liters;               // Setpoint in Liters
-    float liters;                // Volume in Liters
-    uint8_t percent_full;               // Actual_liters / Desired_liters
+    float desired_liters;           // Setpoint in Liters
+    float liters;                   // Volume in Liters
+    uint8_t percent_full;           // Actual_liters / Desired_liters
 
     KettleFiller();
     KettleFiller(String, uint8_t, uint8_t, uint8_t, uint16_t, float);
-    
+
     float read_liters();
     void change_desired_liters(float);
     uint8_t get_percent_full();
     uint8_t determine_valve_position();
     float read_valve_feedback();
-    
-    PropValve* valve;
-    VolumeSensor* sensor;
+
+    PropValve *valve;
+    VolumeSensor *sensor;
 };
 
 KettleFiller::KettleFiller(String nm, uint8_t vp, uint8_t fp, uint8_t ch, uint16_t offset, float dl)
@@ -30,28 +30,22 @@ KettleFiller::KettleFiller(String nm, uint8_t vp, uint8_t fp, uint8_t ch, uint16
     name = nm;
     valve->pin = vp;
     valve->feedback_pin = fp;
-    sensor->ads_channel = ch; 
-    sensor->adc_offset = offset; 
+    sensor->ads_channel = ch;
+    sensor->adc_offset = offset;
     desired_liters = dl;
 }
 
 float KettleFiller::read_liters()
 {
-    liters = (sensor->read_volts() - _ZEROVOLTS) * (_MAXLITERS / (_MAXVOLTS - _ZEROVOLTS));
-    if (liters < 0) {liters = 0;}
-    return liters;
+    uint8_t l = (sensor->read_volts() - _ZEROVOLTS) * (_MAXLITERS / (_MAXVOLTS - _ZEROVOLTS));
+    return liters = (l < 0) ? 0 : l;
 }
 
-void KettleFiller::change_desired_liters(float dl)
-{
-    desired_liters = dl;
-}
+void KettleFiller::change_desired_liters(float dl) {desired_liters = dl;}
 
 uint8_t KettleFiller::get_percent_full()
 {
     percent_full = uint8_t((read_liters() / desired_liters) * 100);
-    if (percent_full > 100) {percent_full = 100;}
-    if (percent_full < 0) {percent_full = 0;}
     return percent_full;
 }
 
@@ -60,7 +54,7 @@ uint8_t KettleFiller::determine_valve_position()
     valve->position = uint8_t((100 - get_percent_full() / 100) * 255);
 }
 
-float KettleFiller::read_valve_feedback() 
+float KettleFiller::read_valve_feedback()
 {
     return valve->read_feedback();
 }
