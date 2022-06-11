@@ -1,6 +1,8 @@
+#include "ArduinoJson.h"
 #include "KettleFiller/KettleFiller.hpp"
 
-KettleFiller kf1(_NAME1, _PWM1, _CHAN1, _SETL1);
+Adafruit_ADS1115 ads;
+KettleFiller kf1(_NAME1, _VPIN1, _FPIN1, _CHAN1, _OFFS1, _SETL1);
 
 void setup(void)
 {
@@ -12,11 +14,8 @@ void setup(void)
     while (1);
   }
 
-  pinMode(kf1.valve_pin, OUTPUT);
-  digitalWrite(kf1.valve_pin, 0);
-  
-//  kf1.feedback_pin = _FBV1;
-//  pinMode(kf1.feedback_pin, INPUT);
+  pinMode(_VPIN1, OUTPUT);
+  pinMode(_FPIN1, INPUT);
 }
 
 void loop(void)
@@ -25,17 +24,12 @@ void loop(void)
 
   message["key"] = _CLIENTID;
   
-  message["data"][kf1.name]["adc"]    = kf1.get_adc();
-  message["data"][kf1.name]["volts"]  = kf1.get_volts();
-  message["data"][kf1.name]["sp_l"]   = kf1.get_desired_liters();
-  message["data"][kf1.name]["liters"] = kf1.get_actual_liters();
-  message["data"][kf1.name]["full"]   = kf1.get_percent_full();
-  message["data"][kf1.name]["open"]   = kf1.get_percent_open();
-  message["data"][kf1.name]["output"] = kf1.get_desired_output();
-  //message["data"][kf1.name]["out_v"]  = kf1.get_actual_output(); 
+  message["data"][kf1.name]["des_ls"] = kf1.desired_liters;
+  message["data"][kf1.name]["liters"] = kf1.read_liters();
+  message["data"][kf1.name]["filled"] = kf1.get_percent_full();
+  message["data"][kf1.name]["va-pos"] = kf1.determine_valve_position();
+  message["data"][kf1.name]["out_v"]  = kf1.read_valve_feedback(); 
   
-  kf1.set_output(kf1.get_desired_output());
-
   serializeJsonPretty(message, Serial);
 
   delay(5000);
