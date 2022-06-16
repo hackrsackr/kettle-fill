@@ -14,24 +14,15 @@ public:
     bool kf_enabled;
 
     KettleFiller();
+    KettleFiller(std::string, float);
 
     void set_kf_enabled(bool en) {kf_enabled = en;}
     void set_desired_liters(float dl) {desired_liters = dl;}
     int get_percent_full(float);
     int get_pv_position(float);
+    void begin(std::string, float);
+    void print_data();
+    void run();
 };
 
-KettleFiller::KettleFiller() {};
-
-
-int KettleFiller::get_percent_full(float liters) {
-    this->percent_full = liters / this->desired_liters * 100;
-    return this->percent_full;
-}
-
-int KettleFiller::get_pv_position(float liters)
-{
-    this->v_position = ((100 - this->percent_full) / 100) * 255;
-    return this->v_position;
-}
 

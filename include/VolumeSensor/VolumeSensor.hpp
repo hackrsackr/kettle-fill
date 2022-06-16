@@ -21,7 +21,7 @@ public:
     //float esp_vusb;                             // Actual voltage of the 5v intput
 
     VolumeSensor();
-    VolumeSensor(int, int);                 // (ads_channel, adc_offset)
+    VolumeSensor(std::string, int, int);                 // (ads_channel, adc_offset)
     
     int read_adc();                  // Read sensor value in Liters
     int trim_adc();                  // Read sensor value in Liters
@@ -29,12 +29,14 @@ public:
     float read_liters();    // Read sensor value in Liters
     float read_gallons();    // Read sensor value in Liters
     void print_data();
+    void begin(std::string, int, int);
     void run();
     
 };
 
-VolumeSensor::VolumeSensor(int ch, int offset) 
+VolumeSensor::VolumeSensor(std::string nm, int ch, int offset) 
 {
+    this->name = nm;
     this->ads_channel = ch;
     this->adc_offset = offset;
 }
@@ -46,7 +48,7 @@ int VolumeSensor::read_adc()
 
 int VolumeSensor::trim_adc()
 {
-    return (ads.readADC_SingleEnded(this->ads_channel) - this->adc_offset);
+    return ads.readADC_SingleEnded(this->ads_channel) - this->adc_offset;
 }
 
 float VolumeSensor::read_volts()
@@ -71,6 +73,12 @@ void VolumeSensor::print_data() {
     std::cout << "volts: " << this->read_volts() << std::endl; 
     std::cout << "liters: " << this->read_liters() << std::endl; 
     std::cout << "gallons: " << this->read_gallons() << std::endl; 
+}
+
+void VolumeSensor::begin(std::string nm, int ad_ch, int ad_off) {
+    this->name = nm;
+    this->ads_channel = ad_ch;
+    this->adc_offset = ad_off;
 }
 
 void VolumeSensor::run() {
