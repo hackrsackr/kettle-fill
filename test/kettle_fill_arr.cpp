@@ -4,10 +4,10 @@
 #include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
 
-#include "kettle_fill.hpp"
-#include "kettle_fill_config.hpp"
+#include "KettleFiller/KettleFiller.hpp"
+#include "KettleFiller/KettleFiller_config.hpp"
 
-Adafruit_ADS1115 ads1;
+Adafruit_ADS1115 ads;
 std::array<KettleFiller, _NUMBER_OF_KETTLES> kf_arr;
 
 void setup(void)

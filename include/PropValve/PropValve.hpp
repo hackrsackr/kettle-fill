@@ -3,31 +3,35 @@
 class PropValve
 {
 public:
-    uint8_t pin;              // Esp32 pin of the proportional valve
-    uint8_t position;           //
-    uint8_t feedback_pin;           // Esp32 pin of the prop valve feedback signal
-    uint8_t feedback;                 // Volts from feedback pin
+    int pin;              // Esp32 pin of the proportional valve
+    int position;           //
+    int feedback_pin;           // Esp32 pin of the prop valve feedback signal
+    float feedback;                 // Volts from feedback pin
 
     PropValve();
-    PropValve(uint8_t, uint8_t);
-    void set_position(uint8_t);
-    uint8_t read_feedback();
+    PropValve(int, int);
+    void set_position(int);
+    int get_position();
+    int read_feedback();
 };
 
-PropValve::PropValve(uint8_t vp, uint8_t fp)
+PropValve::PropValve(int vp, int fp)
 {
-    pin = vp;
-    feedback_pin = fp;
+  this->pin = vp;
+  this->feedback_pin = fp;
 }
 
-void PropValve::set_position(uint8_t pos)
+void PropValve::set_position(int pos)
 {
-    pos = position; 
-    digitalWrite(pin, position);
+  digitalWrite(this->pin, pos);
 }
 
-uint8_t PropValve::read_feedback()
+int PropValve::get_position()
 {
-    feedback = analogReadMilliVolts(feedback_pin) / 1000;
-    return feedback;
+  return this->position;
+}
+
+int PropValve::read_feedback()
+{
+  return analogReadMilliVolts(feedback_pin) / 1000;
 }

@@ -7,54 +7,31 @@
 class KettleFiller
 {
 public:
-    String name;
+    std::string name;
     float desired_liters;           // Setpoint in Liters
-    float liters;                   // Volume in Liters
-    uint8_t percent_full;           // Actual_liters / Desired_liters
+    float percent_full;           // Actual_liters / Desired_liters
+    int v_position;
+    bool kf_enabled;
 
     KettleFiller();
-    KettleFiller(String, uint8_t, uint8_t, uint8_t, uint16_t, float);
 
-    float read_liters();
-    void change_desired_liters(float);
-    uint8_t get_percent_full();
-    uint8_t determine_valve_position();
-    float read_valve_feedback();
-
-    PropValve *valve;
-    VolumeSensor *sensor;
+    void set_kf_enabled(bool en) {kf_enabled = en;}
+    void set_desired_liters(float dl) {desired_liters = dl;}
+    int get_percent_full(float);
+    int get_pv_position(float);
 };
 
-KettleFiller::KettleFiller(String nm, uint8_t vp, uint8_t fp, uint8_t ch, uint16_t offset, float dl)
-{
-    name = nm;
-    valve->pin = vp;
-    valve->feedback_pin = fp;
-    sensor->ads_channel = ch;
-    sensor->adc_offset = offset;
-    desired_liters = dl;
+KettleFiller::KettleFiller() {};
+
+
+int KettleFiller::get_percent_full(float liters) {
+    this->percent_full = liters / this->desired_liters * 100;
+    return this->percent_full;
 }
 
-float KettleFiller::read_liters()
+int KettleFiller::get_pv_position(float liters)
 {
-    uint8_t l = (sensor->read_volts() - _ZEROVOLTS) * (_MAXLITERS / (_MAXVOLTS - _ZEROVOLTS));
-    return liters = (l < 0) ? 0 : l;
+    this->v_position = ((100 - this->percent_full) / 100) * 255;
+    return this->v_position;
 }
 
-void KettleFiller::change_desired_liters(float dl) {desired_liters = dl;}
-
-uint8_t KettleFiller::get_percent_full()
-{
-    percent_full = uint8_t((read_liters() / desired_liters) * 100);
-    return percent_full;
-}
-
-uint8_t KettleFiller::determine_valve_position()
-{
-    valve->position = uint8_t((100 - get_percent_full() / 100) * 255);
-}
-
-float KettleFiller::read_valve_feedback()
-{
-    return valve->read_feedback();
-}

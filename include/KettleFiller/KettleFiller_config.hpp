@@ -2,6 +2,7 @@
 
 // Common
 #define _CLIENTID "kettle-fillers"  // Key for output message
+#define _NUMBER_OF_KETTLES 3        // 
 #define _UNITMAX 10                 // Maximum value in kPa
 #define _MAXVOLTS  5.03             // VCC
 #define _MAXLITERS 77.5             // Max volume in Liter
@@ -13,7 +14,7 @@
 #define _VPIN1 4                     // Valve_pin: valve pwm pin on esp32
 #define _FPIN1 1                     // Feedback_pin: valve feedback pin on esp32
 #define _CHAN1 1                    // ADS1115 channel
-#define _SETL1 27.00f               // Setpoint in Liters 
+#define _SETL1 27.00               // Setpoint in Liters 
 #define _OFFS1 8000               // Setpoint in Liters 
 
 // KF2-Specific

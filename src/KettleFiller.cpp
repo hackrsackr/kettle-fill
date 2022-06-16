@@ -1,8 +1,15 @@
-#include "ArduinoJson.h"
-#include "KettleFiller/KettleFiller.hpp"
+#include <iostream>
+#include <Adafruit_ADS1X15.h>
+#include <ArduinoJson.h>
 
-Adafruit_ADS1115 ads;
-KettleFiller kf1(_NAME1, _VPIN1, _FPIN1, _CHAN1, _OFFS1, _SETL1);
+#include "KettleFiller/KettleFiller.hpp"
+#include "KettleFiller/KettleFiller_config.hpp"
+#include "PropValve/PropValve.hpp"
+#include "VolumeSensor/VolumeSensor.hpp"
+
+PropValve pv(4, 1);
+VolumeSensor vs(0, 8000);
+KettleFiller kf;
 
 void setup(void)
 {
@@ -13,22 +20,31 @@ void setup(void)
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
-
-  pinMode(_VPIN1, OUTPUT);
-  pinMode(_FPIN1, INPUT);
+  kf.set_kf_enabled(false);
+  kf.set_desired_liters(25.50);
+  kf.name = "liqr";
 }
 
 void loop(void)
 {  
+  //std::cout << "setpoint: " << kf.desired_liters << std::endl;
+  //std::cout << "liters: " << vs.read_liters() << std::endl;
+  //std::cout << "kf.pf: " << kf.get_percent_full(vs.liters) << std::endl;
+  //std::cout << "kf.pos: " << kf.get_pv_position(vs.liters) << std::endl;
+  //pv.set_position(kf.v_position);
+  //std::cout << "valve_position: " << pv.get_position() << std::endl;
+
   StaticJsonDocument<1024> message;
 
   message["key"] = _CLIENTID;
   
-  message["data"][kf1.name]["des_ls"] = kf1.desired_liters;
-  message["data"][kf1.name]["liters"] = kf1.read_liters();
-  message["data"][kf1.name]["filled"] = kf1.get_percent_full();
-  message["data"][kf1.name]["va-pos"] = kf1.determine_valve_position();
-  message["data"][kf1.name]["out_v"]  = kf1.read_valve_feedback(); 
+  message["data"][kf.name]["enabled"] = kf.kf_enabled;
+  message["data"][kf.name]["des_ls"] = kf.desired_liters;
+  message["data"][kf.name]["liters"] = vs.read_liters();
+  message["data"][kf.name]["filled"] = kf.get_percent_full(vs.liters);
+  message["data"][kf.name]["va-pos"] = kf.get_pv_position(vs.liters);
+  pv.set_position(kf.v_position);
+  message["data"][kf.name]["out_v"]  = pv.position; 
   
   serializeJsonPretty(message, Serial);
 
