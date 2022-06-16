@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "Adafruit_ADS1X15.h"
 
 class VolumeSensor 
@@ -10,7 +12,7 @@ public:
     uint8_t ads_channel;                        // Channel of the ADS1115 to read
     uint16_t raw_adc;                               // Analog Bits
     uint16_t adc_offset;                        // Analog Bits at level flush
-    uint16_t bitsPerLiter = 2100;                      // Analog Bits
+    float bitsPerLiter = 442.54;                      // Analog Bits
     float volts;
     float liters;                               //  
     float esp_vusb;                             // Actual voltage of the 5v intput
@@ -22,9 +24,9 @@ public:
     uint8_t read_volts();                  // Read sensor value in Liters
     float adc_to_liters();    // Read sensor value in Liters
 
+    void print_data();
     Adafruit_ADS1115* ads;
 };
-
 
 VolumeSensor::VolumeSensor(uint8_t ch, uint16_t offset) 
 {
@@ -48,4 +50,10 @@ float VolumeSensor::adc_to_liters()
 {
     liters = (read_adc() - adc_offset) * bitsPerLiter;
     return liters;
+}
+
+void VolumeSensor::print_data() {
+    std::cout << "adc" << this->read_adc() << std::endl; 
+    std::cout << "volts" << this->read_volts() << std::endl; 
+    std::cout << "liters" << this->adc_to_liters() << std::endl; 
 }

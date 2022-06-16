@@ -11,10 +11,10 @@ void setup(void)
 {
   Serial.begin(115200);
   pinMode(pv.pin, OUTPUT);
+  pv.read_feedback();
+  pv.set_position(pv.position);
 }
 
 void loop(void)
 {
-  pv.read_feedback();
-  pv.set_position(pv.position);
 }

@@ -1,9 +1,6 @@
 #include "ArduinoJson.h"
 
-//#include "flowmeter.hpp"
-//#include "flow_config.hpp"
 #include "FlowMeter/flowmeter.hpp"
-#include "FlowMeter/flow_config.hpp"
 
 FlowMeter f1(_SPIN1, _FLOW1, _YFS402B);
 

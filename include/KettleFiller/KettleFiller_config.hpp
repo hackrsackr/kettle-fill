@@ -4,7 +4,6 @@
 #define _CLIENTID "kettle-fillers"  // Key for output message
 #define _UNITMAX 10                 // Maximum value in kPa
 #define _MAXVOLTS  5.03             // VCC
-#define _MAXVOLTS_ADC  26825        // ADC at MAXVOLTS
 #define _MAXLITERS 77.5             // Max volume in Liter
 #define _ZEROVOLTS 1.93             // Voltage with no liquid
 #define _ZEROVOLTS_ADC 10314        // Adc at ZEROVOLTS
