@@ -1,8 +1,9 @@
 #include "ArduinoJson.h"
 
-#include "FlowMeter/flowmeter.hpp"
+//#include "FlowMeter/flowmeter.hpp"
+#include "flowmeter.hpp"
 
-FlowMeter f1(_SPIN1, _FLOW1, _YFS402B);
+FlowMeter f1(_FLOW1, _SPIN1, _YFS402B);
 
 
 void pulseCounter() { f1.pulse_count++; }

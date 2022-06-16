@@ -1,3 +1,6 @@
+#include <iostream>
+#include <Arduino.h>
+
 // Flowmeter setup
 // Names
 #define _FLOW1 "flow-meter-1"
@@ -17,7 +20,7 @@
 class FlowMeter
 {
 public:
-  uint8_t sensor_pin;
+  int sensor_pin;
   
   volatile int pulse_count;
   
@@ -29,30 +32,24 @@ public:
   unsigned long total_pulseCount;
   unsigned long old_time;
   
-  String name;
+  std::string name;
 
   FlowMeter();
-  FlowMeter(int, String, float);
+  FlowMeter(std::string, int, float);
 
-  void set_sensor_pin(uint8_t);
-  void set_calibration_factor(float);
-  void reset_total();
+  void set_sensor_pin(int pin) {sensor_pin = pin;}
+  void set_calibration_factor(float cf) {cal_factor = cf;};
+  void reset_total() { total_mLs = 0;}
   float get_flowrate();
   void flowmeter_run();
 };
 
-FlowMeter::FlowMeter(int sp, String nm, float cf)
+FlowMeter::FlowMeter(std::string nm, int sp, float cf)
 {
-  sensor_pin = sp;
-  name = nm;
-  cal_factor = cf;
+  this->name = nm;
+  this->sensor_pin = sp;
+  this->cal_factor = cf;
 }
-
-void FlowMeter::reset_total() { total_mLs = 0; }
-
-void FlowMeter::set_sensor_pin(uint8_t pin) { sensor_pin = pin; }
-
-void FlowMeter::set_calibration_factor(float cal) { cal_factor = cal; }
 
 float FlowMeter::get_flowrate()
 {
