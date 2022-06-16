@@ -2,9 +2,9 @@
 
 //#include "FlowMeter/flowmeter.hpp"
 #include "flowmeter.hpp"
+#include "config.hpp"
 
 FlowMeter f1(_FLOW1, _SPIN1, _YFS402B);
-
 
 void pulseCounter() { f1.pulse_count++; }
 
@@ -16,7 +16,6 @@ void setup()
     pinMode(f1.sensor_pin, INPUT_PULLUP);
     attachInterrupt(f1.sensor_pin, pulseCounter, FALLING);
 }
-
 
 void publish_data()
 {

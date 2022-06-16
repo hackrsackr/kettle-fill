@@ -1,6 +1,6 @@
 #pragma once
 
-#include "KettleFiller_config.hpp"
+#include "config.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
 #include "PropValve/PropValve.hpp"
 

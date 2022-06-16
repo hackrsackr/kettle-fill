@@ -3,11 +3,12 @@
 #include <Arduino.h>
 
 #include "PropValve/PropValve.hpp"
+#include "config.hpp"
 
-uint8_t VALVE_PIN = 4;
+int VALVE_PIN = 4;
 uint8_t FEEDBACK_PIN = 1;
 
-PropValve pv(VALVE_PIN, FEEDBACK_PIN);
+PropValve pv(_PVNM1, _VPIN1, _FPIN1);
 
 void setup(void)
 {

@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 
 #include "VolumeSensor/VolumeSensor.hpp"
+#include "config.hpp"
 
 int vusb_ch = 4;
 int ads_ch = 0;                     // ads_channel
@@ -10,7 +11,7 @@ int ads_off = 8000;                // ads_offset
 
 Adafruit_ADS1115 ads;
 
-VolumeSensor v(ads_ch, ads_off);
+VolumeSensor v(_VSNM1, _CHAN1, _OFFS1);
 
 void setup(void)
 {

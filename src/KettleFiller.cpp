@@ -3,11 +3,11 @@
 #include <ArduinoJson.h>
 
 #include "KettleFiller/KettleFiller.hpp"
-#include "KettleFiller/KettleFiller_config.hpp"
+#include "config.hpp"
 #include "PropValve/PropValve.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
 
-PropValve pv(_PVID1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pin
+PropValve pv(_PVNM1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pin
 VolumeSensor vs(_VSNM1, _CHAN1, _OFFS1);         // name, ads_channel, adc_offset
 KettleFiller kf(_KFNM1, _SETL1);                 // name, desired_liters
 
@@ -21,6 +21,8 @@ void setup(void)
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
+  pinMode(pv.pin, OUTPUT);
+  pinMode(pv.feedback_pin, INPUT);
 }
 
 void loop(void)
