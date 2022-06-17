@@ -3,7 +3,7 @@
 #include <ArduinoJson.h>
 
 #include "VolumeSensor/VolumeSensor.hpp"
-#include "config.hpp"
+#include "config.h"
 
 int vusb_ch = 4;
 int ads_ch = 0;                     // ads_channel

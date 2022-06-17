@@ -2,7 +2,7 @@
 
 //#include "FlowMeter/flowmeter.hpp"
 #include "flowmeter.hpp"
-#include "config.hpp"
+#include "config.h"
 
 FlowMeter f1(_FLNM1, _SPIN1, _YFS402B);
 
