@@ -14,59 +14,58 @@
 
 AsyncWebServer server(80);
 
-String processor(const String &);
+String processor(const String&);
+void notFound(AsyncWebServerRequest*);
+
 String setpoint_input = String(_SETL1);
-//String lastTemperature;
 String enabled_input = "true";
-String enableArmChecked = "checked";
+String enableArmChecked = "";
 const char *PARAM_INPUT_1 = "setpoint_input";
 const char *PARAM_INPUT_2 = "enable_arm_input";
 
-// HTML web page to handle 2 input fields (threshold_input, enable_arm_input)
+// HTML web page to handle 2 input fields (setpoint_input, enabled_input)
 const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html><head>
-  <title>Volume Level Control</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head><body>
-  <form action="/get">
-    Enabled <input type="checkbox" name="enable_arm_input" value="true" %ENABLE_ARM_INPUT%><br><br>
-    Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
-    <input type="submit" value="Submit">
-  </form>
-  <h3>Setpoint %SETPOINT% liters</h3>
-  <h3>Volume %VOLUME% liters</h3>
+<!DOCTYPE HTML><html>
+<head>
+<title>Volume Level Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  padding: 25px;
+  background-color: black;
+  color: grey;
+  font-size: 25px;
+}
+</style>
+</head>
+<body>
+<p><strong>KettleFiller</strong></p>
+<form action="/get">
+  Enabled <input type="checkbox" name="enable_arm_input" value="true" %ENABLE_ARM_INPUT%><br><br>
+  Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
+  <input type="submit" value="Submit">
+</form>
+<h4>Setpoint %SETPOINT% liters</h4>
+<h4>Volume %VOLUME% liters</h4>
 </body></html>)rawliteral";
-
-void notFound(AsyncWebServerRequest *request) {
-  request->send(404, "text/plain", "Not found");
-}
-
-String processor(const String& var){
-  //Serial.println(var);
-  if(var == "VOLUME"){
-    return String(vs.liters);
-  }
-  else if(var == "SETPOINT"){
-    kf.desired_liters = setpoint_input.toFloat();
-    return setpoint_input;
-  }
-  else if(var == "ENABLE_ARM_INPUT"){
-    return enableArmChecked;
-  }
-  return String();
-}
-
-// Flag variable to keep track if triggers was activated or not
-bool triggerActive = false;
 
 void setup() {
   Serial.begin(115200);
+  pinMode(pv.pin, OUTPUT);
+  digitalWrite(pv.pin, LOW);
+
+  // ADS 
+  ads.begin(0x48);
+  if (!ads.begin())
+  {
+    Serial.println("Failed to initialize ADS.");
+    while (1);
+  }
+  
   // WiFi
   WiFi.disconnect(true);
-  //ESP.restart();
   delay(1000);
   WiFi.begin(_SSID, _PASS);
-
   uint8_t failed_connections = 0;
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -79,25 +78,15 @@ void setup() {
       ESP.restart();
     }
   }
-
   Serial.print("Connected to ");
   Serial.println(WiFi.localIP());
-  ads.begin(0x48);
-  if (!ads.begin())
-  {
-    Serial.println("Failed to initialize ADS.");
-    while (1);
-  }
   
-  pinMode(pv.pin, OUTPUT);
-  digitalWrite(pv.pin, LOW);
-  kf.print_data(); 
-  // Send web page to client
+  // Server
+  //Send web page to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
   });
-
-  // Receive an HTTP GET request at <ESP_IP>/get?threshold_input=<inputMessage>&enable_arm_input=<inputMessage2>
+  // Receive an HTTP GET request at <ESP_IP>/get?setpoint_input=<setpoint_input>&enable_arm_input=<enabled_input>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     // GET threshold_input value on <ESP_IP>/get?threshold_input=<inputMessage>
     if (request->hasParam(PARAM_INPUT_1)) {
@@ -122,6 +111,7 @@ void setup() {
 }
 
 void loop() {
+  kf.print_data();
   if(enableArmChecked == "checked") {
     kf.kf_enabled = true;
   } else {
@@ -129,4 +119,23 @@ void loop() {
   }
   kf.run();
   delay(5000);
+}
+
+void notFound(AsyncWebServerRequest *request) {
+  request->send(404, "text/plain", "Not found");
+}
+
+String processor(const String& var){
+  //Serial.println(var);
+  if(var == "VOLUME"){
+    return String(vs.liters);
+  }
+  else if(var == "SETPOINT"){
+    kf.desired_liters = setpoint_input.toFloat();
+    return setpoint_input;
+  }
+  else if(var == "ENABLE_ARM_INPUT"){
+    return enableArmChecked;
+  }
+  return String();
 }

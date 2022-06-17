@@ -1,0 +1,38 @@
+html { 
+    font-family: Arial; 
+    display: inline-block; 
+    margin: 0px auto; 
+    text-align: center; 
+  } 
+  img { 
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    padding: 5px; 
+    width: 150px; 
+  } 
+  h1{ 
+    color: #006400; 
+    padding: 2vh; 
+  } 
+  h2{ 
+    color: #006400; 
+    padding: 2vh; 
+  } 
+  p{ 
+    font-size: 1.5rem; 
+  } 
+  .button { 
+     
+    background-color: #006400; 
+    border: none; 
+    border-radius: 6px; 
+    color: white; 
+    padding: 16px 40px; 
+  text-decoration: none; 
+    font-size: 30px; 
+    margin: 2px; 
+    cursor: pointer; 
+  } 
+  .button2 { 
+    background-color: #A9A9A9; 
+  }
