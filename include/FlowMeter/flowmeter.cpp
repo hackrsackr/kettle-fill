@@ -4,7 +4,7 @@
 #include "flowmeter.hpp"
 #include "config.hpp"
 
-FlowMeter f1(_FLOW1, _SPIN1, _YFS402B);
+FlowMeter f1(_FLNM1, _SPIN1, _YFS402B);
 
 void pulseCounter() { f1.pulse_count++; }
 
