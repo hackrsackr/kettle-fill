@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "PropValve/PropValve.hpp"
-#include "config.hpp"
+#include "config.h"
 
 int VALVE_PIN = 4;
 uint8_t FEEDBACK_PIN = 1;
