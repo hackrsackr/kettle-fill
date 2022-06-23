@@ -21,7 +21,8 @@ String setpoint_input = String(_SETL1);
 String enabled_input = "true";
 String enableArmChecked = "";
 const char *PARAM_INPUT_1 = "setpoint_input";
-const char *PARAM_INPUT_2 = "enable_arm_input";
+//const char *PARAM_INPUT_2 = "enable_arm_input";
+const char *PARAM_INPUT_2 = "checkbox_input";
 
 // HTML web page to handle 2 input fields (setpoint_input, enabled_input)
 const char index_html[] PROGMEM = R"rawliteral(
@@ -41,12 +42,14 @@ body {
 <body>
 <p><strong>KettleFiller</strong></p>
 <form action="/get">
-  Enabled <input type="checkbox" name="enable_arm_input" value="true" %ENABLE_ARM_INPUT%><br><br>
-  Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
-  <input type="submit" value="Submit">
+  Enabled <input type="checkbox" name="checkbox_input" value="true" %CHECKBOX_INPUT%><br>
 </form>
 <h4>Setpoint %SETPOINT% liters</h4>
 <h4>Volume %VOLUME% liters</h4>
+<form action="/get">
+  Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
+  <input type="submit" value="Submit">
+</form>
 </body></html>)rawliteral";
 
 void setup() {
@@ -134,7 +137,7 @@ String processor(const String& var){
     kf.desired_liters = setpoint_input.toFloat();
     return setpoint_input;
   }
-  else if(var == "ENABLE_ARM_INPUT"){
+  else if(var == "CHECKBOX_INPUT"){
     return enableArmChecked;
   }
   return String();
