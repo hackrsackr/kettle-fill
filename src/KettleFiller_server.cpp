@@ -40,13 +40,11 @@ body {
 </style>
 </head>
 <body>
-<p><strong>KettleFiller</strong></p>
-<form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input" value="true" %CHECKBOX_INPUT%><br>
-</form>
+<h4><strong>Kettle-1</strong></h4>
 <h4>Setpoint %SETPOINT% liters</h4>
 <h4>Volume %VOLUME% liters</h4>
 <form action="/get">
+  Enabled <input type="checkbox" name="checkbox_input" value="true" %CHECKBOX_INPUT%><br>
   Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
   <input type="submit" value="Submit">
 </form>
