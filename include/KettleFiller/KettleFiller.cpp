@@ -46,7 +46,7 @@ JsonObject KettleFiller::print_data() {
   data[kf.name]["trim_adc"] = vs.trim_adc();
   data[kf.name]["volts"] = vs.read_volts();
   data[kf.name]["des_ls"] = kf.desired_liters;
-  data[kf.name]["liters"] = vs.read_liters();
+  data[kf.name]["kf_liters"] = vs.read_liters();
   data[kf.name]["filled"] = kf.get_percent_full(vs.liters);
   data[kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
   data[kf.name]["pv-pos"] = pv.position;

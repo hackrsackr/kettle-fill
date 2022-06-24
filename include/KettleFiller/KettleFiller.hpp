@@ -9,6 +9,9 @@ class KettleFiller
 public:
     std::string name;
     float desired_liters;           // Setpoint in Liters
+    float liqr_liters;           // Setpoint in Liters
+    float mash_liters;           // Setpoint in Liters
+    float boil_liters;           // Setpoint in Liters
     float percent_full;           // Actual_liters / Desired_liters
     int v_position;
     bool v_state;

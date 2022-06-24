@@ -8,7 +8,6 @@
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 
-
 #include "KettleFiller/KettleFiller.hpp"
 #include "KettleFiller/KettleFiller.cpp"
 #include "PropValve/PropValve.hpp"
@@ -131,11 +130,7 @@ void loop() {
     kf.kf_enabled = false;
   }
   publishData();
-  //message["key"] = _CLIENTID;
-  //message[1] = kf.print_data();
-  //client.publish(_PUBTOPIC, message.as<String>());
   client.loop();
-  delay(5000);
 }
 
 void onConnectionEstablished()
@@ -144,6 +139,16 @@ void onConnectionEstablished()
   {
     Serial.println(payload);
     deserializeJson(input, payload);
+    kf.liqr_liters = input["data"]["volume-sensors"]["output3-1"]["liters"];
+    kf.mash_liters = input["data"]["volume-sensors"]["output3-2"]["liters"];
+    kf.boil_liters = input["data"]["volume-sensors"]["output3-3"]["liters"];
+    
+    //StaticJsonDocument<200> doc;
+    //doc["liqr"] = kf.liqr_liters; 
+    //doc["mash"] = kf.mash_liters; 
+    //doc["boil"] = kf.boil_liters;
+    //serializeJson(doc, Serial);
+    
     publishData(); });
 }
 
@@ -151,6 +156,7 @@ void publishData()
 {
   if (client.isConnected())
   {
+    kf.run();
     StaticJsonDocument<768> message;
     //DynamicJsonDocument message(768);
     message["key"] = _CLIENTID;
@@ -160,7 +166,10 @@ void publishData()
     message["data"][kf.name]["trim_adc"] = vs.trim_adc();
     message["data"][kf.name]["volts"] = vs.read_volts();
     message["data"][kf.name]["des_ls"] = kf.desired_liters;
-    message["data"][kf.name]["liters"] = vs.read_liters();
+    message["data"][kf.name]["liqr_liters"] = kf.liqr_liters;
+    message["data"][kf.name]["mash_liters"] = kf.mash_liters;
+    message["data"][kf.name]["boil_liters"] = kf.boil_liters;
+    message["data"][kf.name]["vs_liters"] = vs.read_liters();
     message["data"][kf.name]["filled"] = kf.get_percent_full(vs.liters);
     message["data"][kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
     message["data"][kf.name]["pv-pos"] = pv.position;

@@ -9,7 +9,7 @@
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
 #define _CLIENTID "kettle-filler"
-#define _SUBTOPIC "brewcast/history/spark-three"
+#define _SUBTOPIC "brewcast/history/meters"
 #define _PUBTOPIC "brewcast/history/kettle-filler"
 
 // General 
