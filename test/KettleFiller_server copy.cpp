@@ -1,13 +1,10 @@
 #include <iostream>
-
-#include <ArduinoJson.h>
-#include <EspMQTTClient.h>
 #include <Adafruit_ADS1X15.h>
+#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
-
 
 #include "KettleFiller/KettleFiller.hpp"
 #include "KettleFiller/KettleFiller.cpp"
@@ -16,10 +13,10 @@
 #include "config.h"
 
 AsyncWebServer server(80);
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+
 String processor(const String&);
 void notFound(AsyncWebServerRequest*);
-StaticJsonDocument<4096> input;
+
 String setpoint_input = String(_SETL1);
 String enabled_input = "true";
 String enableArmChecked = "";
@@ -52,8 +49,6 @@ body {
   <input type="submit" value="Submit">
 </form>
 </body></html>)rawliteral";
-void onConnectionEstablished(void);
-void publishData(void);
 
 void setup() {
   Serial.begin(115200);
@@ -67,10 +62,7 @@ void setup() {
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
-
-  client.setMaxPacketSize(4096);
-  client.enableOTA(); 
-
+  
   // WiFi
   WiFi.disconnect(true);
   delay(1000);
@@ -97,8 +89,6 @@ void setup() {
   });
   // Receive an HTTP GET request at <ESP_IP>/get?setpoint_input=<setpoint_input>&enable_arm_input=<enabled_input>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    String inputMessage;
-    String inputParam;
     // GET threshold_input value on <ESP_IP>/get?threshold_input=<inputMessage>
     if (request->hasParam(PARAM_INPUT_1)) {
       setpoint_input = request->getParam(PARAM_INPUT_1)->value();
@@ -115,60 +105,21 @@ void setup() {
     kf.kf_enabled = enabled_input;
     Serial.println(setpoint_input);
     Serial.println(enabled_input);
-  request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
-                                     + inputParam + ") with value: " + inputMessage +
-                                     "<br><a href=\"/\">Return to Home Page</a>"); });
+    request->send(200, "text/html", "HTTP GET request sent to your ESP.<br><a href=\"/\">Return to Home Page</a>");
+  });
   server.onNotFound(notFound);
   server.begin();
 }
 
 void loop() {
-  StaticJsonDocument<1024> message;
-  kf.run();
+  kf.print_data();
   if(enableArmChecked == "checked") {
     kf.kf_enabled = true;
   } else {
     kf.kf_enabled = false;
   }
-  publishData();
-  //message["key"] = _CLIENTID;
-  //message[1] = kf.print_data();
-  //client.publish(_PUBTOPIC, message.as<String>());
-  client.loop();
+  kf.run();
   delay(5000);
-}
-
-void onConnectionEstablished()
-{
-  client.subscribe(_SUBTOPIC, [](const String &payload)
-  {
-    Serial.println(payload);
-    deserializeJson(input, payload);
-    publishData(); });
-}
-
-void publishData()
-{
-  if (client.isConnected())
-  {
-    StaticJsonDocument<768> message;
-    //DynamicJsonDocument message(768);
-    message["key"] = _CLIENTID;
-
-    message["data"][kf.name]["enabled"] = kf.kf_enabled;
-    message["data"][kf.name]["adc"] = vs.read_adc();
-    message["data"][kf.name]["trim_adc"] = vs.trim_adc();
-    message["data"][kf.name]["volts"] = vs.read_volts();
-    message["data"][kf.name]["des_ls"] = kf.desired_liters;
-    message["data"][kf.name]["liters"] = vs.read_liters();
-    message["data"][kf.name]["filled"] = kf.get_percent_full(vs.liters);
-    message["data"][kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
-    message["data"][kf.name]["pv-pos"] = pv.position;
-  
-    serializeJsonPretty(message, Serial);
-    client.publish(_PUBTOPIC, message.as<String>());
-    delay(5000);
-  }
 }
 
 void notFound(AsyncWebServerRequest *request) {

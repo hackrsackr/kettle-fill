@@ -31,7 +31,8 @@ void PropValve::begin(int vp, int fp) {
 void PropValve::set_position(int pos)
 {
   this->position = pos;
-  digitalWrite(this->pin, pos);
+  //digitalWrite(this->pin, pos);
+  analogWrite(this->pin, pos);
 }
 
 int PropValve::get_position()

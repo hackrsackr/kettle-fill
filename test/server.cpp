@@ -1,8 +1,11 @@
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <EspMQTTClient.h>
 #include <Wire.h>
 #include "VolumeSensor/VolumeSensor.hpp"
+#include "KettleFiller/KettleFiller.hpp"
+#include "KettleFiller/KettleFiller.cpp"
 #include "config.h"
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
+#include <ESP32HTTPUpdateServer.h>
+#include <EspMQTTClient.h>
 
 #include "KettleFiller/KettleFiller.hpp"
 #include "config.h"
@@ -16,7 +18,6 @@ KettleFiller::KettleFiller(std::string nm, float dl) {
     this->name = nm;
     this->desired_liters = dl;
 };
-
 
 int KettleFiller::get_percent_full(float liters) {
     this->percent_full = liters / this->desired_liters * 100;
@@ -36,39 +37,32 @@ void KettleFiller::begin(std::string nm, float dl)  {
 
 }
 
-void KettleFiller::print_data() {
-  StaticJsonDocument<1024> message;
-  message["key"] = _CLIENTID;
+JsonObject KettleFiller::print_data() {
+  JsonObject data;
+  //message["key"] = _CLIENTID;
 
-  message["data"][kf.name]["enabled"] = kf.kf_enabled;
-  message["data"][kf.name]["adc"] = vs.read_adc();
-  message["data"][kf.name]["trim_adc"] = vs.trim_adc();
-  message["data"][kf.name]["volts"] = vs.read_volts();
-  message["data"][kf.name]["des_ls"] = kf.desired_liters;
-  message["data"][kf.name]["liters"] = vs.read_liters();
-  message["data"][kf.name]["filled"] = kf.get_percent_full(vs.liters);
-  message["data"][kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
-  message["data"][kf.name]["pv-pos"] = pv.position;
-
-  serializeJsonPretty(message, Serial);
+  data[kf.name]["enabled"] = kf.kf_enabled;
+  data[kf.name]["adc"] = vs.read_adc();
+  data[kf.name]["trim_adc"] = vs.trim_adc();
+  data[kf.name]["volts"] = vs.read_volts();
+  data[kf.name]["des_ls"] = kf.desired_liters;
+  data[kf.name]["liters"] = vs.read_liters();
+  data[kf.name]["filled"] = kf.get_percent_full(vs.liters);
+  data[kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
+  data[kf.name]["pv-pos"] = pv.position;
+  
+  serializeJsonPretty(data, Serial);
+  return data;
 }
 
 void KettleFiller::run() {
-  StaticJsonDocument<1024> message;
-  message["key"] = _CLIENTID;
-
-  message["data"][kf.name]["enabled"] = kf.kf_enabled;
-  message["data"][kf.name]["adc"] = vs.read_adc();
-  message["data"][kf.name]["trim_adc"] = vs.trim_adc();
-  message["data"][kf.name]["volts"] = vs.read_volts();
-  message["data"][kf.name]["des_ls"] = kf.desired_liters;
-  message["data"][kf.name]["liters"] = vs.read_liters();
-  message["data"][kf.name]["filled"] = kf.get_percent_full(vs.liters);
-  message["data"][kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
+  vs.read_adc();
+  vs.trim_adc();
+  vs.read_volts();
+  vs.read_liters();
+  kf.get_percent_full(vs.liters);
+  kf.get_pv_position(vs.liters);
   pv.set_position(kf.v_position);
-  message["data"][kf.name]["pv-pos"] = pv.position;
-  //message["data"][kf.name]["pv-fb"] = pv.read_feedback();
 
-  serializeJsonPretty(message, Serial);
 }
 

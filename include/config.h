@@ -5,8 +5,14 @@
 #define _SSID SECRET_SSID
 #define _PASS SECRET_PASS
 
+// MQTT setup
+#define _MQTTHOST "192.168.1.2"
+#define _MQTTPORT 1883
+#define _CLIENTID "kettle-filler"
+#define _SUBTOPIC "brewcast/history/spark-three"
+#define _PUBTOPIC "brewcast/history/kettle-filler"
+
 // General 
-#define _CLIENTID "kettle-fillers"  // Key for output message
 //#define _NUMBER_OF_KETTLES 3        // 
 #define _UNITMAX 10                 // Maximum value in kPa
 #define _MAXVOLTS  5.03             // VCC
