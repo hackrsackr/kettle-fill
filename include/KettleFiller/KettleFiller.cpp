@@ -4,7 +4,7 @@
 #include <ESP32HTTPUpdateServer.h>
 #include <EspMQTTClient.h>
 
-#include "KettleFiller/KettleFiller.hpp"
+#include "KettleFiller.hpp"
 #include "config.h"
 #include "PropValve/PropValve.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
@@ -13,7 +13,7 @@ PropValve pv(_PVNM1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pi
 VolumeSensor vs(_VSNM1, _CHAN1, _OFFS1);         // name, ads_channel, adc_offset
 KettleFiller kf(_KFNM1, _SETL1);                 // name, desired_liters
 
-KettleFiller::KettleFiller(std::string nm, float dl) {
+KettleFiller::KettleFiller(String nm, float dl) {
     this->set_kf_enabled(true);
     this->name = nm;
     this->desired_liters = dl;
@@ -30,39 +30,39 @@ int KettleFiller::get_pv_position(float liters)
     return this->v_position;
 }
 
-void KettleFiller::begin(std::string nm, float dl)  {
+void KettleFiller::begin(String nm, float dl)  {
     this->set_kf_enabled(true);
     this->name = nm;
     this->desired_liters = dl;
 
 }
 
-JsonObject KettleFiller::print_data() {
-  JsonObject data;
-  //message["key"] = _CLIENTID;
 
-  data[kf.name]["enabled"] = kf.kf_enabled;
-  data[kf.name]["adc"] = vs.read_adc();
-  data[kf.name]["trim_adc"] = vs.trim_adc();
-  data[kf.name]["volts"] = vs.read_volts();
-  data[kf.name]["des_ls"] = kf.desired_liters;
-  data[kf.name]["kf_liters"] = vs.read_liters();
-  data[kf.name]["filled"] = kf.get_percent_full(vs.liters);
-  data[kf.name]["kf-pos"] = kf.get_pv_position(vs.liters);
-  data[kf.name]["pv-pos"] = pv.position;
+//void KettleFiller::print_data() {
+//  StaticJsonDocument<256> message;
+//  message["key"] = _CLIENTID;
+
+//  message["data"][this->name]["enabled"] = this->kf_enabled;
+//  message["data"][this->name]["des_ls"] = this->desired_liters;
+//  message["data"][this->name]["kf_liters"] = this->get_liters();
+  //message["data"][this->name]["adc"] = vs.read_adc();
+  //message["data"][this->name]["trim_adc"] = vs.trim_adc();
+  //message["data"][this->name]["volts"] = vs.read_volts();
+  //message["data"][this->name]["kf_liters"] = vs.read_liters();
+  //message["data"][this->name]["filled"] = this->.get_percent_full(vs.liters);
+  //message["data"][this->name]["kf-pos"] = this->.get_pv_position(vs.liters);
+  //message["data"][this->name]["pv-pos"] = pv.position;
   
-  serializeJsonPretty(data, Serial);
-  return data;
-}
+//  serializeJsonPretty(message, Serial);
+//}
 
-void KettleFiller::run() {
-  vs.read_adc();
-  vs.trim_adc();
-  vs.read_volts();
-  vs.read_liters();
-  kf.get_percent_full(vs.liters);
-  kf.get_pv_position(vs.liters);
-  pv.set_position(kf.v_position);
+//void KettleFiller::run() {
+//  this->get_liters();
+  //vs.read_adc();
+  //vs.trim_adc();
+  //vs.read_volts();
+  //this->.get_percent_full(this->liters);
+  //this->.get_pv_position(this->.liters);
+  //pv.set_position(kf.v_position);
 
-}
-
+//}

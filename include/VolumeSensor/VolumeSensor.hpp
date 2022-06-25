@@ -9,7 +9,7 @@ Adafruit_ADS1115 ads;
 class VolumeSensor
 {
 public:
-    std::string name;
+    String name;
     int ads_channel;                        // Channel of the ADS1115 to read
     int adc_offset;                        // Analog Bits at level flush
     float bitsPerGallon = 1675.00;                      // Analog Bits
@@ -21,7 +21,7 @@ public:
     //float esp_vusb;                             // Actual voltage of the 5v intput
 
     VolumeSensor();
-    VolumeSensor(std::string, int, int);                 // (ads_channel, adc_offset)
+    VolumeSensor(String, int, int);                 // (ads_channel, adc_offset)
     
     int read_adc();                  // Read sensor value in Liters
     int trim_adc();                  // Read sensor value in Liters
@@ -29,12 +29,12 @@ public:
     float read_liters();    // Read sensor value in Liters
     float read_gallons();    // Read sensor value in Liters
     void print_data();
-    void begin(std::string, int, int);
+    void begin(String, int, int);
     void run();
     
 };
 
-VolumeSensor::VolumeSensor(std::string nm, int ch, int offset) 
+VolumeSensor::VolumeSensor(String nm, int ch, int offset) 
 {
     this->name = nm;
     this->ads_channel = ch;
@@ -75,7 +75,7 @@ void VolumeSensor::print_data() {
     std::cout << "gallons: " << this->read_gallons() << std::endl; 
 }
 
-void VolumeSensor::begin(std::string nm, int ad_ch, int ad_off) {
+void VolumeSensor::begin(String nm, int ad_ch, int ad_off) {
     this->name = nm;
     this->ads_channel = ad_ch;
     this->adc_offset = ad_off;

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <Arduino.h>
 
-
-
 class FlowMeter
 {
 public:

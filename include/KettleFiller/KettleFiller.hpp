@@ -7,8 +7,10 @@
 class KettleFiller
 {
 public:
-    std::string name;
+    String name;
     float desired_liters;           // Setpoint in Liters
+    //float setpoint;           // Setpoint in Liters
+    float liters;           // Volume in Liters
     float liqr_liters;           // Setpoint in Liters
     float mash_liters;           // Setpoint in Liters
     float boil_liters;           // Setpoint in Liters
@@ -18,15 +20,15 @@ public:
     bool kf_enabled;
 
     KettleFiller();
-    KettleFiller(std::string, float);
+    KettleFiller(String, float);
 
     void set_kf_enabled(bool en) {kf_enabled = en;}
     void set_desired_liters(float dl) {desired_liters = dl;}
     int get_percent_full(float);
     int get_pv_position(float);
-    void begin(std::string, float);
-    JsonObject print_data();
+    void begin(String, float);
+    void print_data();
     void run();
+    float get_liters();
 };
-
 
