@@ -203,18 +203,18 @@ void publishData()
 
     message["data"][kf1.name]["enabled"] = kf1.kf_enabled;
     message["data"][kf1.name]["setpoint"] = kf1.desired_liters;
-    message["data"][kf1.name]["liqr_liters"] = kf1.liters;
-    message["data"][kf1.name]["delta_Ls"] = kf1.desired_liters - kf1.liters;
+    message["data"][kf1.name]["liters"] = kf1.liters;
+    //message["data"][kf1.name]["delta_Ls"] = kf1.desired_liters - kf1.liters;
     
     message["data"][kf2.name]["enabled"] = kf2.kf_enabled;
     message["data"][kf2.name]["setpoint"] = kf2.desired_liters;
-    message["data"][kf2.name]["liqr_liters"] = kf2.liters;
-    message["data"][kf2.name]["delta_Ls"] = kf2.desired_liters - kf2.liters;
+    message["data"][kf2.name]["liters"] = kf2.liters;
+    //message["data"][kf2.name]["delta_Ls"] = kf2.desired_liters - kf2.liters;
     
     message["data"][kf3.name]["enabled"] = kf3.kf_enabled;
     message["data"][kf3.name]["setpoint"] = kf3.desired_liters;
-    message["data"][kf3.name]["liqr_liters"] = kf3.liters;
-    message["data"][kf3.name]["delta_Ls"] = kf3.desired_liters - kf3.liters;
+    message["data"][kf3.name]["liters"] = kf3.liters;
+    //message["data"][kf3.name]["delta_Ls"] = kf3.desired_liters - kf3.liters;
     //message["data"][kf.name]["adc"] = vs.read_adc();
     //message["data"][kf.name]["trim_adc"] = vs.trim_adc();
     //message["data"][kf.name]["volts"] = vs.read_volts();

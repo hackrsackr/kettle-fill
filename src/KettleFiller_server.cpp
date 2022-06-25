@@ -10,8 +10,8 @@
 
 #include "KettleFiller/KettleFiller.hpp"
 #include "KettleFiller/KettleFiller.cpp"
-#include "PropValve/PropValve.hpp"
-#include "VolumeSensor/VolumeSensor.hpp"
+//#include "PropValve/PropValve.hpp"
+//#include "VolumeSensor/VolumeSensor.hpp"
 #include "config.h"
 
 
@@ -58,30 +58,27 @@ body {
 </style>
 </head>
 <body>
-<p>Liqr_Tun<br> 
-Volume: %VOLUME1% [L]</p>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input1" value="true" %CHECKBOX_INPUT1%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required>[L]<br>
+  Liqr Volume: %VOLUME1% [L]<br>
+  <input type="checkbox" name="checkbox_input1" value="true" %CHECKBOX_INPUT1%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT1% [L]<br>
+  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required>
   <input type="submit" value="Submit">
-</form>
-<p>Mash_Tun<br> 
-Volume: %VOLUME2% [L]</p>
+</form><br>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input2" value="true" %CHECKBOX_INPUT2%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required>[L]<br>
+  Mash Volume: %VOLUME2% [L]<br>
+  <input type="checkbox" name="checkbox_input2" value="true" %CHECKBOX_INPUT2%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT2% [L]<br> 
+  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required>
   <input type="submit" value="Submit">
-</form>
-<p>Boiler<br> 
-Volume: %VOLUME3% [L]</p>
+</form><br>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input3" value="true" %CHECKBOX_INPUT3%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required>[L]<br>
+  Boil Volume: %VOLUME3% [L]<br> 
+  <input type="checkbox" name="checkbox_input3" value="true" %CHECKBOX_INPUT3%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT3% [L]<br> 
+  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required>
   <input type="submit" value="Submit">
-</form>
+</form><br>
 </body></html>)rawliteral";
 
 String processor(const String&);
@@ -162,8 +159,7 @@ void setup() {
       inputParam = enabled_input3;
     }
     Serial.println(inputMessage);
-    request->send(200, "text/html", "HTTP GET request sent to your ESP (enabled: " 
-                                     + inputParam + ") with value: " + inputMessage +
+    request->send(200, "text/html", "HTTP GET request sent. {enabled: " + inputParam + ", Setpoint: " + inputMessage + " }"
                                      "<br><a href=\"/\">Return to Home Page</a>"); });
   server.onNotFound(notFound);
   server.begin();
@@ -203,18 +199,18 @@ void publishData()
 
     message["data"][kf1.name]["enabled"] = kf1.kf_enabled;
     message["data"][kf1.name]["setpoint"] = kf1.desired_liters;
-    message["data"][kf1.name]["liqr_liters"] = kf1.liters;
-    message["data"][kf1.name]["delta_Ls"] = kf1.desired_liters - kf1.liters;
+    message["data"][kf1.name]["liters"] = kf1.liters;
+    //message["data"][kf1.name]["delta_Ls"] = kf1.desired_liters - kf1.liters;
     
     message["data"][kf2.name]["enabled"] = kf2.kf_enabled;
     message["data"][kf2.name]["setpoint"] = kf2.desired_liters;
-    message["data"][kf2.name]["liqr_liters"] = kf2.liters;
-    message["data"][kf2.name]["delta_Ls"] = kf2.desired_liters - kf2.liters;
+    message["data"][kf2.name]["liters"] = kf2.liters;
+    //message["data"][kf2.name]["delta_Ls"] = kf2.desired_liters - kf2.liters;
     
     message["data"][kf3.name]["enabled"] = kf3.kf_enabled;
     message["data"][kf3.name]["setpoint"] = kf3.desired_liters;
-    message["data"][kf3.name]["liqr_liters"] = kf3.liters;
-    message["data"][kf3.name]["delta_Ls"] = kf3.desired_liters - kf3.liters;
+    message["data"][kf3.name]["liters"] = kf3.liters;
+    //message["data"][kf3.name]["delta_Ls"] = kf3.desired_liters - kf3.liters;
     //message["data"][kf.name]["adc"] = vs.read_adc();
     //message["data"][kf.name]["trim_adc"] = vs.trim_adc();
     //message["data"][kf.name]["volts"] = vs.read_volts();

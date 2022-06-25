@@ -36,33 +36,3 @@ void KettleFiller::begin(String nm, float dl)  {
     this->desired_liters = dl;
 
 }
-
-
-//void KettleFiller::print_data() {
-//  StaticJsonDocument<256> message;
-//  message["key"] = _CLIENTID;
-
-//  message["data"][this->name]["enabled"] = this->kf_enabled;
-//  message["data"][this->name]["des_ls"] = this->desired_liters;
-//  message["data"][this->name]["kf_liters"] = this->get_liters();
-  //message["data"][this->name]["adc"] = vs.read_adc();
-  //message["data"][this->name]["trim_adc"] = vs.trim_adc();
-  //message["data"][this->name]["volts"] = vs.read_volts();
-  //message["data"][this->name]["kf_liters"] = vs.read_liters();
-  //message["data"][this->name]["filled"] = this->.get_percent_full(vs.liters);
-  //message["data"][this->name]["kf-pos"] = this->.get_pv_position(vs.liters);
-  //message["data"][this->name]["pv-pos"] = pv.position;
-  
-//  serializeJsonPretty(message, Serial);
-//}
-
-//void KettleFiller::run() {
-//  this->get_liters();
-  //vs.read_adc();
-  //vs.trim_adc();
-  //vs.read_volts();
-  //this->.get_percent_full(this->liters);
-  //this->.get_pv_position(this->.liters);
-  //pv.set_position(kf.v_position);
-
-//}
