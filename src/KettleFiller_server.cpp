@@ -179,7 +179,7 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
-    std::cout << payload << std::endl;
+    //std::cout << payload << std::endl;
     deserializeJson(input, payload);
     kf1.liters = input["data"]["volume-sensors"]["output3-1"]["liters"];
     kf2.liters = input["data"]["volume-sensors"]["output3-2"]["liters"];
