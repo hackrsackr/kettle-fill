@@ -15,31 +15,34 @@
 #include "config.h"
 
 
-
-AsyncWebServer server(80);
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-String processor(const String&);
-void notFound(AsyncWebServerRequest*);
-
-StaticJsonDocument<4096> input;
 KettleFiller kf1(_KFNM1, _SETL1);                 // name, desired_liters
 KettleFiller kf2(_KFNM2, _SETL2);                 // name, desired_liters
 KettleFiller kf3(_KFNM3, _SETL3);                 // name, desired_liters
+std::array<KettleFiller, _NUMBER_OF_KETTLES> kf_arr = {kf1, kf2, kf3};
+
 String setpoint_input1 = String(_SETL1);
 String setpoint_input2 = String(_SETL2);
 String setpoint_input3 = String(_SETL3);
+
 String enabled_input1 = "true";
 String enabled_input2 = "true";
 String enabled_input3 = "true";
+
 String enableArmChecked1 = "";
 String enableArmChecked2 = "";
 String enableArmChecked3 = "";
+
 const char *SET_INPUT_1 = "setpoint_input1";
 const char *SET_INPUT_2 = "setpoint_input2";
 const char *SET_INPUT_3 = "setpoint_input3";
+
 const char *CBX_INPUT_1 = "checkbox_input1";
 const char *CBX_INPUT_2 = "checkbox_input2";
 const char *CBX_INPUT_3 = "checkbox_input3";
+
+AsyncWebServer server(80);
+EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+StaticJsonDocument<2096> input;
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -52,32 +55,37 @@ body {
   background-color: black;
   color: grey;
   font-size: 25px;
-}
 </style>
 </head>
 <body>
-<p>Liqr_Tun %VOLUME1% liters</p>
+<p>Liqr_Tun<br> 
+Volume: %VOLUME1% [L]</p>
 <form action="/get">
   Enabled <input type="checkbox" name="checkbox_input1" value="true" %CHECKBOX_INPUT1%><br>
-  Setpoint1[L]<br>
-  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required><br>
+  Setpoint<br>
+  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required>[L]<br>
   <input type="submit" value="Submit">
 </form>
-<p>Mash_Tun %VOLUME2% liters</p>
+<p>Mash_Tun<br> 
+Volume: %VOLUME2% [L]</p>
 <form action="/get">
   Enabled <input type="checkbox" name="checkbox_input2" value="true" %CHECKBOX_INPUT2%><br>
-  Setpoint2[L]<br>
-  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required><br>
+  Setpoint<br>
+  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required>[L]<br>
   <input type="submit" value="Submit">
 </form>
-<p>Boiler %VOLUME3% liters</p>
+<p>Boiler<br> 
+Volume: %VOLUME3% [L]</p>
 <form action="/get">
   Enabled <input type="checkbox" name="checkbox_input3" value="true" %CHECKBOX_INPUT3%><br>
-  Setpoint3[L]<br>
-  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required><br>
+  Setpoint<br>
+  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required>[L]<br>
   <input type="submit" value="Submit">
 </form>
 </body></html>)rawliteral";
+
+String processor(const String&);
+void notFound(AsyncWebServerRequest*);
 void onConnectionEstablished(void);
 void publishData(void);
 
@@ -106,17 +114,17 @@ void setup() {
   Serial.print("Connected to ");
   Serial.println(WiFi.localIP());
   
-  // Server
-  //Send web page to client
+  // Server - Send web page to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
   });
-  
+  // Input Handler
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     String inputMessage;
     String inputParam;
     if (request->hasParam(SET_INPUT_1)) {
       setpoint_input1 = request->getParam(SET_INPUT_1)->value();
+      inputMessage = setpoint_input1; 
       if (request->hasParam(CBX_INPUT_1)) {
         enabled_input1 = request->getParam(CBX_INPUT_1)->value();
         enableArmChecked1 = "checked";
@@ -125,9 +133,11 @@ void setup() {
         enableArmChecked1 = "";
       }
       kf1.kf_enabled = enabled_input1;
+      inputParam = enabled_input1;
     }
     else if (request->hasParam(SET_INPUT_2)) {
       setpoint_input2 = request->getParam(SET_INPUT_2)->value();
+      inputMessage = setpoint_input2; 
       if (request->hasParam(CBX_INPUT_2)) {
         enabled_input2 = request->getParam(CBX_INPUT_2)->value();
         enableArmChecked2 = "checked";
@@ -136,8 +146,10 @@ void setup() {
         enableArmChecked2 = "";
       }
       kf2.kf_enabled = enabled_input2;
+      inputParam = enabled_input2;
     }
     else if (request->hasParam(SET_INPUT_3)) {
+      inputMessage = setpoint_input3; 
       setpoint_input3 = request->getParam(SET_INPUT_3)->value();
       if (request->hasParam(CBX_INPUT_3)) {
         enabled_input3 = request->getParam(CBX_INPUT_3)->value();
@@ -147,9 +159,10 @@ void setup() {
         enableArmChecked3 = "";
       }
       kf3.kf_enabled = enabled_input3;
+      inputParam = enabled_input3;
     }
     Serial.println(inputMessage);
-  request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
+    request->send(200, "text/html", "HTTP GET request sent to your ESP (enabled: " 
                                      + inputParam + ") with value: " + inputMessage +
                                      "<br><a href=\"/\">Return to Home Page</a>"); });
   server.onNotFound(notFound);
@@ -175,7 +188,6 @@ void onConnectionEstablished()
     kf1.liters = input["data"]["volume-sensors"]["output3-1"]["liters"];
     kf2.liters = input["data"]["volume-sensors"]["output3-2"]["liters"];
     kf3.liters = input["data"]["volume-sensors"]["output3-3"]["liters"];
-    
     
     publishData(); });
 }
