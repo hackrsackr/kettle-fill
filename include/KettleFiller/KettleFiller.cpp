@@ -9,15 +9,23 @@
 #include "PropValve/PropValve.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
 
-PropValve pv(_PVNM1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pin
-VolumeSensor vs(_VSNM1, _CHAN1, _OFFS1);         // name, ads_channel, adc_offset
-KettleFiller kf(_KFNM1, _SETL1);                 // name, desired_liters
+//PropValve pv(_PVNM1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pin
+//VolumeSensor vs(_VSNM1, _CHAN1, _OFFS1);         // name, ads_channel, adc_offset
+//KettleFiller kf(_KFNM1, _SETL1);                 // name, desired_liters
 
 KettleFiller::KettleFiller(String nm, float dl) {
     this->set_kf_enabled(true);
     this->name = nm;
     this->desired_liters = dl;
 };
+
+//KettleFiller::KettleFiller(String nm, float dl, VolumeSensor vs, PropValve pv) {
+//    this->set_kf_enabled(true);
+//    this->name = nm;
+//    this->desired_liters = dl;
+///   this->pv_ptr = &pv;
+//    this->vs_ptr = &vs;
+//};
 
 int KettleFiller::get_percent_full(float liters) {
     this->percent_full = liters / this->desired_liters * 100;

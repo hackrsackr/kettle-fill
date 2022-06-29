@@ -7,6 +7,8 @@
 class KettleFiller
 {
 public:
+   // PropValve *pv_ptr;
+    //VolumeSensor *vs_ptr;
     String name;
     float desired_liters;           // Setpoint in Liters
     //float setpoint;           // Setpoint in Liters
@@ -21,6 +23,7 @@ public:
 
     KettleFiller();
     KettleFiller(String, float);
+    //KettleFiller(String, float, PropValve, VolumeSensor);
 
     void set_kf_enabled(bool en) {kf_enabled = en;}
     void set_desired_liters(float dl) {desired_liters = dl;}

@@ -11,14 +11,19 @@
 #include "KettleFiller/KettleFiller.hpp"
 #include "KettleFiller/KettleFiller.cpp"
 #include "PropValve/PropValve.hpp"
-#include "VolumeSensor/VolumeSensor.hpp"
+//#include "VolumeSensor/VolumeSensor.hpp"
 #include "config.h"
+//#include "server.h"
 
+//PropValve pv(_PVNM1, _VPIN1, _FPIN1);
 
 KettleFiller kf1(_KFNM1, _SETL1);                 // name, desired_liters
 KettleFiller kf2(_KFNM2, _SETL2);                 // name, desired_liters
 KettleFiller kf3(_KFNM3, _SETL3);                 // name, desired_liters
 std::array<KettleFiller, _NUMBER_OF_KETTLES> kf_arr = {kf1, kf2, kf3};
+
+AsyncWebServer server(80);
+EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 String setpoint_input1 = String(_SETL1);
 String setpoint_input2 = String(_SETL2);
@@ -40,10 +45,6 @@ const char *CBX_INPUT_1 = "checkbox_input1";
 const char *CBX_INPUT_2 = "checkbox_input2";
 const char *CBX_INPUT_3 = "checkbox_input3";
 
-AsyncWebServer server(80);
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-StaticJsonDocument<2096> input;
-
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
 <head>
@@ -58,32 +59,30 @@ body {
 </style>
 </head>
 <body>
-<p>Liqr_Tun<br> 
-Volume: %VOLUME1% [L]</p>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input1" value="true" %CHECKBOX_INPUT1%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required>[L]<br>
+  Liqr Volume: %VOLUME1% [L]<br>
+  <input type="checkbox" name="checkbox_input1" value="true" %CHECKBOX_INPUT1%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT1% [L]<br>
+  <input type="number" step="0.5" name="setpoint_input1" value="%SETPOINT1%" required>
   <input type="submit" value="Submit">
-</form>
-<p>Mash_Tun<br> 
-Volume: %VOLUME2% [L]</p>
+</form><br>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input2" value="true" %CHECKBOX_INPUT2%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required>[L]<br>
+  Mash Volume: %VOLUME2% [L]<br>
+  <input type="checkbox" name="checkbox_input2" value="true" %CHECKBOX_INPUT2%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT2% [L]<br> 
+  <input type="number" step="0.5" name="setpoint_input2" value="%SETPOINT2%" required>
   <input type="submit" value="Submit">
-</form>
-<p>Boiler<br> 
-Volume: %VOLUME3% [L]</p>
+</form><br>
 <form action="/get">
-  Enabled <input type="checkbox" name="checkbox_input3" value="true" %CHECKBOX_INPUT3%><br>
-  Setpoint<br>
-  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required>[L]<br>
+  Boil Volume: %VOLUME3% [L]<br> 
+  <input type="checkbox" name="checkbox_input3" value="true" %CHECKBOX_INPUT3%> Setpoint Enabled<br>
+  Setpoint: %SETPOINT3% [L]<br> 
+  <input type="number" step="0.5" name="setpoint_input3" value="%SETPOINT3%" required>
   <input type="submit" value="Submit">
-</form>
+</form><br>
 </body></html>)rawliteral";
 
+StaticJsonDocument<2096> input;
 String processor(const String&);
 void notFound(AsyncWebServerRequest*);
 void onConnectionEstablished(void);
@@ -162,8 +161,7 @@ void setup() {
       inputParam = enabled_input3;
     }
     Serial.println(inputMessage);
-    request->send(200, "text/html", "HTTP GET request sent to your ESP (enabled: " 
-                                     + inputParam + ") with value: " + inputMessage +
+    request->send(200, "text/html", "HTTP GET request sent. {enabled: " + inputParam + ", Setpoint: " + inputMessage + " }"
                                      "<br><a href=\"/\">Return to Home Page</a>"); });
   server.onNotFound(notFound);
   server.begin();
@@ -183,7 +181,7 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
-    std::cout << payload << std::endl;
+    //std::cout << payload << std::endl;
     deserializeJson(input, payload);
     kf1.liters = input["data"]["volume-sensors"]["output3-1"]["liters"];
     kf2.liters = input["data"]["volume-sensors"]["output3-2"]["liters"];
@@ -214,6 +212,11 @@ void publishData()
     message["data"][kf3.name]["enabled"] = kf3.kf_enabled;
     message["data"][kf3.name]["setpoint"] = kf3.desired_liters;
     message["data"][kf3.name]["liters"] = kf3.liters;
+    //  for (uint8_t i = 0; i < _NUMBER_OF_KETTLES; i++) {
+    //    message["data"][kf_arr[i].name]["enabled"] = kf_arr[i].kf_enabled;
+    //    message["data"][kf_arr[i].name]["setpoint"] = kf_arr[i].desired_liters;
+    //    message["data"][kf_arr[i].name]["liters"] = kf_arr[i].liters;
+    //  }
     //message["data"][kf3.name]["delta_Ls"] = kf3.desired_liters - kf3.liters;
     //message["data"][kf.name]["adc"] = vs.read_adc();
     //message["data"][kf.name]["trim_adc"] = vs.trim_adc();

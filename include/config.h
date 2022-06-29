@@ -27,6 +27,8 @@
 
 // KF1-Specific
 String _KFNM1 = "liqr"; // KettleFiller Identifier
+String _KFNM2 = "mash"; // KettleFiller Identifier
+String _KFNM3 = "boil"; // KettleFiller Identifier
 float _SETL1 = 27.00;   // KettleFiller->desired_liters
 // VS1-Specific
 String _VSNM1 = "vs_liqr"; // VolumeSensor Identifier
@@ -34,7 +36,6 @@ uint8_t _CHAN1 = 2;        // VolumeSensor->ads_channel
 uint16_t _OFFS1 = 10193;   // VolumeSensor->adc_offset
 
 // KF2-Specific
-String _KFNM2 = "mash"; // KettleFiller Identifier
 float _SETL2 = 28.00;   // KettleFiller->desired_liters
 // VS2-Specific
 String _VSNM2 = "vs_mash"; // VolumeSensor Identifier
@@ -42,12 +43,13 @@ uint8_t _CHAN2 = 2;        // VolumeSensor->ads_channel
 uint16_t _OFFS2 = 8000;    // VolumeSensor->adc_offset
 
 // KF3-Specific
-String _KFNM3 = "boil"; // KettleFiller Identifier
 float _SETL3 = 29.00;   // KettleFiller->desired_liters
 // VS3-Specific
 String _VSNM3 = "vs_boil"; // VolumeSensor Identifier
 uint8_t _CHAN3 = 2;        // VolumeSensor->ads_channel
 uint16_t _OFFS3 = 8000;     // VolumeSensor->adc_offset
+
+uint8_t _CHAN4 = 3;        // VolumeSensor->ads_channel
 
 std::array<String, _NUMBER_OF_KETTLES> 
 KF_NAMES = {_KFNM1, _KFNM2, _KFNM3};
@@ -58,8 +60,8 @@ SETPOINTS = {_SETL1, _SETL2, _SETL3};
 std::array<String, _NUMBER_OF_KETTLES>
     VS_NAMES = {_VSNM1, _VSNM2, _VSNM3};
 
-std::array<uint8_t, _NUMBER_OF_KETTLES>
-    ADS_CHANNELS = {_CHAN1, _CHAN2, _CHAN3};
+std::array<uint8_t, 4>
+    ADS_CHANNELS = {_CHAN1, _CHAN2, _CHAN3, _CHAN4};
 
 std::array<uint16_t, _NUMBER_OF_KETTLES>
     ADC_OFFSETS = {_OFFS1, _OFFS2, _OFFS3};
