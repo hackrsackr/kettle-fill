@@ -88,6 +88,6 @@ void publishData()
     // message["data"][kf_arr[i].name]["gallons"] = vs_arr[i].read_gallons();
   }
   serializeJsonPretty(message, Serial);
-  //client.publish(_PUBTOPIC, message.as<String>());
+  client.publish(_PUBTOPIC, message.as<String>());
   delay(5000);
 }

@@ -23,6 +23,8 @@ void setup()
 {
   Serial.begin(115200);
   ads.begin(0x48);
+  client.setMaxPacketSize(4096);
+  client.enableOTA();
   if (!ads.begin())
   {
     Serial.println("Failed to initialize ADS.");
@@ -58,8 +60,8 @@ void loop()
   kf_arr[2].kf_enabled = (enableArmChecked3 == "checked") ? true : false;
   pv.pv_enabled = (enableArmChecked4 == "checked") ? true : false;
 
-  client.loop();
   publishData();
+  client.loop();
 }
 
 void onConnectionEstablished()
