@@ -1,32 +1,38 @@
 #include <iostream>
-#include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
 
+#include <array>
+//#include "VolumeSensor.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
 #include "config.h"
 
-int vusb_ch = 4;
-int ads_ch = 0;                     // ads_channel
-int ads_off = 8000;                // ads_offset
-
-Adafruit_ADS1115 ads;
-
-VolumeSensor v(_VSNM1, _CHAN1, _OFFS1);
+std::array<VolumeSensor, _NUMBER_OF_KETTLES> vs_arr = {
+    VolumeSensor(_VSNM1, _CHAN1, _OFFS1),
+    VolumeSensor(_VSNM2, _CHAN2, _OFFS2),
+    VolumeSensor(_VSNM3, _CHAN3, _OFFS3)};
 
 void setup(void)
 {
   Serial.begin(115200);
   ads.begin(0x48);
 
-  if (!ads.begin()) {
+  if (!ads.begin())
+  {
     Serial.println("Failed to initialize ADS.");
-    while (1);
+    while (1)
+      ;
   }
-  v.name = "liqr";
 }
 
 void loop(void)
 {
-    v.run();
-}
+  StaticJsonDocument<1024> message;
 
+  for (int i = 0; i < _NUMBER_OF_KETTLES; i++)
+  {
+    message["data"][vs_arr[i].name]["liters"] = vs_arr[i].read_liters();
+    message["data"][vs_arr[i].name]["galloms"] = vs_arr[i].read_gallons();
+  }
+  serializeJsonPretty(message, Serial);
+  delay(5000);
+}

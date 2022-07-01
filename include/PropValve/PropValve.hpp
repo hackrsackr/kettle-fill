@@ -1,20 +1,38 @@
 #pragma once
+#include <string>
+#include "Arduino.h"
 
 class PropValve
 {
 public:
-    String name;
-    int pin;              // Esp32 pin of the proportional valve
-    int position;           //
-    int feedback_pin;           // Esp32 pin of the prop valve feedback signal
-    float feedback;                 // Volts from feedback pin
+  std::string name;
+  int pin;      // Esp32 pin of the proportional valve
+  int position; //
+  bool pv_enabled;
 
-    PropValve();
-    PropValve(String, int, int);
-    void begin(int, int);
-    void set_position(int);
-    int get_position();
-    int read_feedback();
+  PropValve();
+  PropValve(std::string, int);
+
+  void set_position(int);
+  void set_pv_enabled(bool);
 };
 
+PropValve::PropValve(std::string nm, int pn)
+{
+  name = nm;
+  pin = pn;
+  pinMode(this->pin, OUTPUT);
+}
 
+void PropValve::set_position(int pos)
+{
+  if (pv_enabled) {
+  position = pos;
+  analogWrite(pin, position);
+  }
+}
+
+void PropValve::set_pv_enabled(bool pv_en)
+{
+  pv_enabled = pv_en;
+}

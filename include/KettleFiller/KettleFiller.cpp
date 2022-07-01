@@ -1,46 +1,49 @@
 #include <iostream>
-#include <Adafruit_ADS1X15.h>
 #include <ArduinoJson.h>
-#include <ESP32HTTPUpdateServer.h>
-#include <EspMQTTClient.h>
 
-#include "KettleFiller.hpp"
-#include "config.h"
-#include "PropValve/PropValve.hpp"
+#include <array>
+//#include "VolumeSensor.hpp"
+#include "KettleFiller/KettleFiller.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
+#include "config.h"
 
-//PropValve pv(_PVNM1, _VPIN1, _FPIN1);            // name, valve_pin, feedback_pin
-//VolumeSensor vs(_VSNM1, _CHAN1, _OFFS1);         // name, ads_channel, adc_offset
-//KettleFiller kf(_KFNM1, _SETL1);                 // name, desired_liters
+std::array<KettleFiller, _NUMBER_OF_KETTLES> kf_arr = {
+    KettleFiller(_KFNM1, _SETL1),
+    KettleFiller(_KFNM2, _SETL2),
+    KettleFiller(_KFNM3, _SETL3)};
 
-KettleFiller::KettleFiller(String nm, float dl) {
-    this->set_kf_enabled(true);
-    this->name = nm;
-    this->desired_liters = dl;
-};
+std::array<VolumeSensor, _NUMBER_OF_KETTLES> vs_arr = {
+    VolumeSensor(_VSNM1, _CHAN1, _OFFS1),
+    VolumeSensor(_VSNM2, _CHAN2, _OFFS2),
+    VolumeSensor(_VSNM3, _CHAN3, _OFFS3)};
 
-//KettleFiller::KettleFiller(String nm, float dl, VolumeSensor vs, PropValve pv) {
-//    this->set_kf_enabled(true);
-//    this->name = nm;
-//    this->desired_liters = dl;
-///   this->pv_ptr = &pv;
-//    this->vs_ptr = &vs;
-//};
-
-int KettleFiller::get_percent_full(float liters) {
-    this->percent_full = liters / this->desired_liters * 100;
-    return this->percent_full;
-}
-
-int KettleFiller::get_pv_position(float liters)
+void setup(void)
 {
-    this->v_position = ((100 - this->percent_full) / 100) * 255;
-    return this->v_position;
+  Serial.begin(115200);
+  ads.begin(0x48);
+
+  if (!ads.begin())
+  {
+    Serial.println("Failed to initialize ADS.");
+    while (1)
+      ;
+  }
 }
 
-void KettleFiller::begin(String nm, float dl)  {
-    this->set_kf_enabled(true);
-    this->name = nm;
-    this->desired_liters = dl;
+void loop(void)
+{
+  StaticJsonDocument<1024> message;
 
+  for (int i = 0; i < _NUMBER_OF_KETTLES; i++)
+  {
+    kf_arr[i].vs_ptr = &vs_arr[i];
+    message["data"][kf_arr[i].name]["kf_name"] = kf_arr[i].name;
+    message["data"][kf_arr[i].name]["vs_name"] = kf_arr[i].vs_ptr->name;
+    message["data"][kf_arr[i].name]["enabled"] = kf_arr[i].kf_enabled;
+    message["data"][kf_arr[i].name]["setpoint"] = kf_arr[i].desired_liters;
+    message["data"][kf_arr[i].name]["liters"] = kf_arr[i].vs_ptr->read_liters();
+    message["data"][kf_arr[i].name]["gallons"] = kf_arr[i].vs_ptr->read_gallons();
+  }
+  serializeJsonPretty(message, Serial);
+  delay(5000);
 }

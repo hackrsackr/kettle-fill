@@ -5,11 +5,8 @@ Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Hello!");
-
-  Serial.println("Getting single-ended readings from AIN0..3");
-  Serial.println("ADC Range: +/- 6.144V (1 bit = 3mV/ADS1015, 0.1875mV/ADS1115)");
 
   // The ADC input range (or gain) can be changed via the following
   // functions, but be careful never to exceed VDD +0.3V max, or to
@@ -30,8 +27,7 @@ void setup(void)
   }
 }
 
-void loop(void)
-{
+void adc_test() {
   int16_t adc0, adc1, adc2, adc3;
   float volts0, volts1, volts2, volts3;
 
@@ -51,5 +47,11 @@ void loop(void)
   Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
   Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
 
-  delay(1000);
+  delay(5000);
+
+}
+void loop(void)
+{
+  adc_test();
+
 }

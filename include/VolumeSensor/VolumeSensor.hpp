@@ -1,101 +1,99 @@
 #pragma once
-
 #include <iostream>
 #include <Adafruit_ADS1X15.h>
-#include <ArduinoJson.h>
 
 Adafruit_ADS1115 ads;
 
 class VolumeSensor
 {
 public:
-    String name;
-    int ads_channel;                        // Channel of the ADS1115 to read
-    int adc_offset;                        // Analog Bits at level flush
-    float bitsPerGallon = 1675.00;                      // Analog Bits
-    float bitsPerLiter = 442.54;                      // Analog Bits
-    //int sensor_pin;                         // 
-    //int raw_adc;                               // Analog Bits
-    //float volts;
-    float liters;                               //  
-    //float esp_vusb;                             // Actual voltage of the 5v intput
+    Adafruit_ADS1115* ads_ptr;
+    std::string name;
+    int adc;                       // Analog Bits
+    int net_adc;                       // Analog Bits
+    int ads_channel;               // Channel of the ADS1115 to read
+    int adc_offset;                // Analog Bits at level flush
+    float bitsPerGallon = 1675.00; // Analog Bits
+    float bitsPerLiter = 442.54;   // Analog Bits
+    float liters;                  // Volume in Liters
+    float gallons;                   // Volume in Volts
+    float volts;                   // Volume in Volts
 
     VolumeSensor();
-    VolumeSensor(String, int, int);                 // (ads_channel, adc_offset)
-    
-    int read_adc();                  // Read sensor value in Liters
-    int trim_adc();                  // Read sensor value in Liters
-    float read_volts();                  // Read sensor value in Liters
-    float read_liters();    // Read sensor value in Liters
-    float read_gallons();    // Read sensor value in Liters
+    VolumeSensor(std::string, int, int); // (name, ads_channel, adc_offset)
+
+    int read_adc();       // Read sensor value
+    int trim_adc();                                 // Read sensor value minus offset
+    float read_volts();                             // Read sensor value in Volts
+    float read_liters();                            // Read sensor value in Liters
+    float read_gallons();                           // Read sensor value in Gallons
     void print_data();
-    void begin(String, int, int);
+    void print_volume();
     void run();
-    
 };
 
-VolumeSensor::VolumeSensor(String nm, int ch, int offset) 
+VolumeSensor::VolumeSensor(std::string nm, int ch, int offset)
 {
-    this->name = nm;
-    this->ads_channel = ch;
-    this->adc_offset = offset;
+    name = nm;
+    ads_channel = ch;
+    adc_offset = offset;
 }
 
 int VolumeSensor::read_adc()
 {
-    return ads.readADC_SingleEnded(this->ads_channel);
+    adc = ads.readADC_SingleEnded(ads_channel);
+    return adc;
 }
 
 int VolumeSensor::trim_adc()
 {
-    return ads.readADC_SingleEnded(this->ads_channel) - this->adc_offset;
+    net_adc = ads.readADC_SingleEnded(ads_channel) - adc_offset;
+    return net_adc;
 }
 
 float VolumeSensor::read_volts()
 {
-    return ads.computeVolts(this->read_adc());
+    volts = ads.computeVolts(read_adc());
+    return volts;
 }
 
 float VolumeSensor::read_liters()
 {
-    this->liters = ((this->trim_adc() / this->bitsPerLiter) > 0) ? (this->trim_adc() / this->bitsPerLiter) : 0;
-    return this->liters;
+    liters = ((trim_adc() / bitsPerLiter) > 0) ? (trim_adc() / bitsPerLiter) : 0;
+    return liters;
 }
 
 float VolumeSensor::read_gallons()
 {
-    return ((this->trim_adc() / this->bitsPerGallon) > 0) ? (this->trim_adc() / this->bitsPerGallon) : 0;
+    gallons = ((trim_adc() / bitsPerGallon) > 0) ? (trim_adc() / bitsPerGallon) : 0;
+    return gallons;
 }
 
-void VolumeSensor::print_data() {
-    std::cout << "adc: " << this->read_adc() << std::endl; 
-    std::cout << "net-adc: " << this->trim_adc() << std::endl; 
-    std::cout << "volts: " << this->read_volts() << std::endl; 
-    std::cout << "liters: " << this->read_liters() << std::endl; 
-    std::cout << "gallons: " << this->read_gallons() << std::endl; 
+void VolumeSensor::print_data()
+{
+    std::cout << name << "\n"
+              << "adc: " << read_adc() << "\n"
+              << "net-adc: " << trim_adc() << "\n"
+              << "volts: " << read_volts() << "\n"
+              << "liters: " << read_liters() << "\n"
+              << "gallons: " << read_gallons() << "\n"
+              << "\n";
 }
 
-void VolumeSensor::begin(String nm, int ad_ch, int ad_off) {
-    this->name = nm;
-    this->ads_channel = ad_ch;
-    this->adc_offset = ad_off;
+void VolumeSensor::print_volume()
+{
+    std::cout.precision(3);
+    std::cout << "{ \"" << name << "\": "
+              << "{ \"liters\": " << read_liters() << ", "
+              << "\"gallons\": " << read_gallons() << " }}\n"
+              << "\n";
 }
 
-void VolumeSensor::run() {
-  StaticJsonDocument<384> message;
-  
-  message["key"] = "vs_test";
-  this->name = "vs1";
-  
-  message["data"][this->name]["adc"] = this->read_adc();
-  message["data"][this->name]["net-adc"] = this->trim_adc();
-  message["data"][this->name]["volts"] = this->read_volts();
-  message["data"][this->name]["liters"] = this->read_liters();
-  message["data"][this->name]["gallons"] = this->read_gallons();
-  
-  //std::cout << message << std::endl;
-  serializeJsonPretty(message, Serial);
-  std::cout << std::endl;
-  
-  delay(5000);
+void VolumeSensor::run()
+{
+    adc = ads.readADC_SingleEnded(ads_channel);
+    volts = ads.computeVolts(read_adc());
+    net_adc = ads.readADC_SingleEnded(ads_channel) - adc_offset;
+    liters = ((trim_adc() / bitsPerLiter) > 0) ? (trim_adc() / bitsPerLiter) : 0;
+    gallons = ((trim_adc() / bitsPerGallon) > 0) ? (trim_adc() / bitsPerGallon) : 0;
 }
