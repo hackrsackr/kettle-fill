@@ -6,8 +6,8 @@ class PropValve
 {
 public:
   std::string name;
-  int pin;      // Esp32 pin of the proportional valve
-  int position; //
+  int pin;                                    // Esp32 pin of the proportional valve
+  int position;                               //
   bool pv_enabled;
 
   PropValve();
