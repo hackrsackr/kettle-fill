@@ -1,15 +1,10 @@
-//
-// !!! WARNING !!! AUTO-GENERATED FILE!
-// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
-// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
-//
 {
     "configurations": [
         {
             "name": "PlatformIO",
             "includePath": [
                 "/home/pi/kettle-fill/include",
-                "/home/pi/kettle-fill/src",
+                "/home/pi/kettle-fill/src/**",
                 "/home/pi/kettle-fill/lib/Adafruit_ADS1X15",
                 "/home/pi/kettle-fill/lib/Adafruit BusIO",
                 "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
@@ -222,8 +217,7 @@
                 "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                 "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                 "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
-                "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                ""
+                "/home/pi/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

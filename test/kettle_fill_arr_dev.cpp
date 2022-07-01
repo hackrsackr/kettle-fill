@@ -64,7 +64,9 @@ void onConnectionEstablished()
   client.subscribe(_SUBTOPIC, [](const String &payload)
                    {
     deserializeJson(input, payload);
-    
+    kf_arr[0].kettle_valve_state = input["data"][liqrPumpDrain_valve]["state"];
+    kf_arr[1].kettle_valve_state = input["data"][mashDrain_valve]["state"];
+    kf_arr[2].kettle_valve_state = input["data"][boilDrain_valve]["state"];
     publishData(); });
 }
 

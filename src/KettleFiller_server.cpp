@@ -1,19 +1,10 @@
 #include <iostream>
+#include <array>
 #include <ArduinoJson.h>
 #include <EspMQTTClient.h>
-#include <array>
 
-#include "PropValve/PropValve.hpp"
-#include "VolumeSensor/VolumeSensor.hpp"
-#include "KettleFiller/KettleFiller.hpp"
 #include "config.h"
 #include "server.h"
-//#include "server_dev.h"
-
-std::array<VolumeSensor, _NUMBER_OF_KETTLES> vs_arr = {
-    VolumeSensor(_VSNM1, _CHAN1, _OFFS1),
-    VolumeSensor(_VSNM2, _CHAN2, _OFFS2),
-    VolumeSensor(_VSNM3, _CHAN3, _OFFS3)};
 
 StaticJsonDocument<2096> input;
 void onConnectionEstablished(void);
@@ -22,15 +13,7 @@ void publishData(void);
 void setup()
 {
   Serial.begin(115200);
-  ads.begin(0x48);
-  client.setMaxPacketSize(4096);
-  client.enableOTA();
-  if (!ads.begin())
-  {
-    Serial.println("Failed to initialize ADS.");
-    while (1)
-      ;
-  }
+
   // WiFi
   WiFi.disconnect(true);
   delay(1000);
@@ -50,7 +33,24 @@ void setup()
   Serial.print("Connected to ");
   Serial.println(WiFi.localIP());
 
+  // Web server
   server_setup();
+  client.setMaxPacketSize(4096);
+  client.enableOTA();
+  
+  // ADS1115
+  ads.begin(0x48);
+  if (!ads.begin())
+  {
+    Serial.println("Failed to initialize ADS.");
+    while (1);
+  }
+  
+  // KettleFiller ptrVolumeSensor 
+  for (uint8_t i = 0; i < _NUMBER_OF_KETTLES; i++)
+  {
+    kf_arr[i].vs_ptr = &vs_arr[i];
+  }
 }
 
 void loop()
@@ -69,7 +69,12 @@ void onConnectionEstablished()
   client.subscribe(_SUBTOPIC, [](const String &payload)
                    {
     deserializeJson(input, payload);
-    
+    kf_arr[0].drain_valve_state = input["data"][liqrDrain_valve]["state"];
+    kf_arr[0].return_valve_state = input["data"][liqrReturn_valve]["state"];
+    kf_arr[1].drain_valve_state = input["data"][mashDrain_valve]["state"];
+    kf_arr[1].return_valve_state = input["data"][mashReturn_valve]["state"];
+    kf_arr[2].drain_valve_state = input["data"][boilDrain_valve]["state"];
+    kf_arr[2].return_valve_state = input["data"][boilReturn_valve]["state"];
     publishData(); });
 }
 
@@ -81,17 +86,19 @@ void publishData()
     message["key"] = _CLIENTID;
     for (uint8_t i = 0; i < _NUMBER_OF_KETTLES; i++)
     {
-      kf_arr[i].vs_ptr = &vs_arr[i];
-      kf_arr[i].pv_ptr = &pv;
-      kf_arr[i].pv_ptr->set_position(0);
+      message["data"][pv.name]["pv_enabled"] = pv.pv_enabled;
+      message["data"][pv.name]["pv_pos"] = pv.position;
       message["data"][kf_arr[i].name]["kf_name"] = kf_arr[i].name;
       message["data"][kf_arr[i].name]["vs_name"] = kf_arr[i].vs_ptr->name;
       message["data"][kf_arr[i].name]["enabled"] = kf_arr[i].kf_enabled;
       message["data"][kf_arr[i].name]["setpoint"] = kf_arr[i].desired_liters;
       message["data"][kf_arr[i].name]["liters"] = kf_arr[i].vs_ptr->read_liters();
       message["data"][kf_arr[i].name]["gallons"] = kf_arr[i].vs_ptr->read_gallons();
-      message["data"][kf_arr[i].name]["pv_enabled"] = kf_arr[i].pv_ptr->pv_enabled;
-      message["data"][kf_arr[i].name]["pv_pos"] = kf_arr[i].pv_ptr->position;
+      message["data"][kf_arr[i].name]["fill%"] = kf_arr[i].get_percent_full();
+      message["data"][kf_arr[i].name]["pv_pos_sp"] = kf_arr[i].get_pv_position();
+      message["data"][kf_arr[i].name]["drain valve state"] = kf_arr[i].drain_valve_state;
+      message["data"][kf_arr[i].name]["return valve state"] = kf_arr[i].return_valve_state;
+
     }
     serializeJsonPretty(message, Serial);
     client.publish(_PUBTOPIC, message.as<String>());

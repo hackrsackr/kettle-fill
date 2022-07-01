@@ -9,28 +9,27 @@ class KettleFiller
 {
 public:
     std::string name;
-    float desired_liters;           // Setpoint in Liters
-    float liters;                   // Volume in Liters
-    float liqr_liters;              // Setpoint in Liters
-    float mash_liters;              // Setpoint in Liters
-    float boil_liters;              // Setpoint in Liters
-    float percent_full;             // Actual_liters / Desired_liters
-    int v_position;
-    bool kf_enabled;
+    float desired_liters;                           // Setpoint in Liters
+    float liters;                                   // Volume in Liters
+    float percent_full;                             // Actual_liters / Desired_liters
+    int v_position;                                 // PropValve->position
+    bool kf_enabled;                                // Enabled state
+    int drain_valve_state;
+    int return_valve_state;
+    //int returnDrain_valve_state;
+    //int aux_drain_valve_state
+    //int water_in_valve_state;
 
-    VolumeSensor* vs_ptr;
-    PropValve* pv_ptr;
+    VolumeSensor* vs_ptr;                           // VolumeSensor Pointer 
+    PropValve* pv_ptr;                              //PropValve Pointer
+    
     KettleFiller();
     KettleFiller(std::string, float);
 
     void set_kf_enabled(bool en) {kf_enabled = en;}
     void set_desired_liters(float dl) {desired_liters = dl;}
-    int get_percent_full(float);
-    int get_pv_position(float);
-    void begin(std::string, float);
-    //void print_data();
-    void run();
-    float get_liters();
+    int get_percent_full();
+    int get_pv_position();
 };
 
 KettleFiller::KettleFiller(std::string nm, float dl) {
@@ -39,20 +38,13 @@ KettleFiller::KettleFiller(std::string nm, float dl) {
     desired_liters = dl;
 }
 
-int KettleFiller::get_percent_full(float liters) {
+int KettleFiller::get_percent_full() {
     percent_full = liters / desired_liters * 100;
     return percent_full;
 }
 
-int KettleFiller::get_pv_position(float liters)
+int KettleFiller::get_pv_position()
 {
     v_position = ((100 - percent_full) / 100) * 255;
     return v_position;
-}
-
-void KettleFiller::begin(std::string nm, float dl)  {
-    set_kf_enabled(true);
-    name = nm;
-    desired_liters = dl;
-
 }
