@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <array>
-// #include "Arduino.h"
+
 #include "secrets.h"
 #include "PropValve/PropValve.hpp"
 #include "VolumeSensor/VolumeSensor.hpp"
@@ -40,16 +40,13 @@ std::string liqrIn_valve = "ACT_valve-14_LiquorPumpDrain";
 std::string liqr_3w_valve = "ACT_3WV-l_hexLiquorOut";
 std::string wort_3w_valve = "ACT_3WV-l_hexWortOut";
 std::string h20_3w_valve = "ACT_3WV-l_hexLiqourIn";
-/////////////////////////////PUMPS////////////////////////////////
 
-/////////////////////////////PV////////////////////////////////
-
-std::string _PVNM1 = "pv_h20";          // PropValve->name
+std::string _PVNM1 = "PropValve";          // PropValve->name
 int _VPIN1 = 4;                         // PropValve->pin: valve pwm pin on esp32
 int _VPOS = 0;                           // PropValve->position
 
 PropValve pv(_PVNM1, _VPIN1);
-/////////////////////////////PV////////////////////////////////
+/////////////////////////////Valves////////////////////////////////
 
 /////////////////////////////VS////////////////////////////////
 

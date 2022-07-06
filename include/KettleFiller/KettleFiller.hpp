@@ -17,11 +17,11 @@ public:
     int drain_valve_state;
     int return_valve_state;
     //int returnDrain_valve_state;
-    //int aux_drain_valve_state
-    //int water_in_valve_state;
+    //int aux_drain_valve_state; 
+    //int input_valve_state;
 
     VolumeSensor* vs_ptr;                           // VolumeSensor Pointer 
-    PropValve* pv_ptr;                              //PropValve Pointer
+    //PropValve* pv_ptr;                              //PropValve Pointer
     
     KettleFiller();
     KettleFiller(std::string, float);
